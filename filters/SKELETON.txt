@@ -1,0 +1,122 @@
+#Shows the quest items and jewels, if you don't know where they are.
+Show
+    Class Quest Jewel Divination Card "Map" "Labyrinth" Leaguestones
+
+
+
+#Portal Scrolls not allowed
+Hide
+    BaseType "Portal Scroll"
+
+#RNGESUS PLZ
+Show
+    BaseType "Mirror of Kalandra"
+    SetBackgroundColor 200 0 0
+    SetTextColor 0 0 0
+    SetBorderColor 0 0 0
+    PlayAlertSound 1
+    PlayAlertSound 2
+    PlayAlertSound 3
+
+Show
+    BaseType "Fishing Rod"
+    SetBackgroundColor 200 0 0
+    SetTextColor 0 0 0
+    SetBorderColor 0 0 0
+    PlayAlertSound 1
+    PlayAlertSound 2
+    PlayAlertSound 3
+
+#For high level crafting
+Show
+    Class Currency
+    BaseType "Eternal" "Exalted" "Divine" "Regal"
+    SetBackgroundColor 245 188 192
+    SetTextColor 0 0 0
+    SetBorderColor 100 0 0
+    PlayAlertSound 2
+
+#For Science purposes
+Show
+    Class Currency
+    BaseType "Vaal"
+    SetTextColor 190 0 0
+    PlayAlertSound 1 
+
+#Vorici crafting and general shenanigans
+Show
+    Class Currency
+    BaseType "Fusi" "Jew" "Chrom"
+    SetBorderColor 46 209 58
+    PlayAlertSound 4
+Show
+    Class Currency
+    BaseType "Alch" "Chaos"
+    SetTextColor 213 204 43
+    PlayAlertSound 3
+
+#Show all the other non-special currency
+Show
+    Class Currency
+
+Hide
+    Class Flask
+    BaseType "Hybrid"
+
+Show
+    Class "Flask"
+    Quality > 0
+    Rarity > Normal
+    SetTextColor 255 100 100
+
+Show
+    Class "Flask"
+
+
+#Show resistance + damage rings. ADD STUFF IF NEEDED
+
+Show
+    Class "Ring"
+    BaseType "Topaz" "Sapphire" "Ruby" "Two-Stone" "Iron"
+
+#And finally, gems
+
+Show
+    Class Gem
+    BaseType "Vaal" "Golem"
+
+Show
+    Class Gem
+    Quality > 0
+    SetBackgroundColor 200 50 250
+    SetTextColor 0 0 0
+    PlayAlertSound 5 150
+    
+Show
+    Class Gem
+Show
+    SocketGroup RGB
+    SetTextColor 245 17 165
+    SetBackgroundColor 50 50 0
+Show
+    LinkedSockets = 6
+    SetTextColor 148 77 141
+    SetFontSize 39
+Show
+    Sockets >= 5
+    SetTextColor 242 12 212
+
+# A blue border for regal recipe items
+Show
+    ItemLevel >= 75
+    Rarity Rare
+    SetBorderColor 30 144 255
+# A Yellow border for Chaos recipe items
+Show
+    ItemLevel >= 60
+    Rarity Rare
+    SetBorderColor 255 200 0
+# Show all other rare items
+Show
+    Rarity >= Rare
+Hide

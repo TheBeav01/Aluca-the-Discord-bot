@@ -1,0 +1,87 @@
+Show
+	Class Quest Jewel Divination Card Gem
+
+Hide
+	Class Flask
+	BaseType "Hybrid"
+Show
+	Class Flask
+Show
+	SocketGroup RGB
+
+Show
+	Class Sword Mace
+	ItemLevel <= 35
+  	SetBorderColor 196 60 192
+   	PlayAlertSound 2 150
+
+Show
+	Class Sword Mace
+        Rarity > Normal
+        ItemLevel > 30
+        SetBorderColor 255 0 0
+        PlayAlertSound 5 150
+
+#Portal Scrolls not allowed
+Hide
+        BaseType "Portal Scroll"
+
+Show
+        BaseType "Mirror of Kalandra"
+        SetBackgroundColor 200 0 0
+        SetTextColor 0 0 0
+        SetBorderColor 0 0 0
+        PlayAlertSound 1
+        PlayAlertSound 2
+        PlayAlertSound 3
+
+Show
+        BaseType "Fishing Rod"
+        SetBackgroundColor 200 0 0
+        SetTextColor 0 0 0
+        SetBorderColor 0 0 0
+        PlayAlertSound 1
+        PlayAlertSound 2 
+        PlayAlertSound 3
+#For high level crafting
+Show
+        Class Currency
+        BaseType "Eternal" "Exalted" "Divine" "Regal"
+        SetBackgroundColor 245 188 192
+        SetTextColor 0 0 0
+        SetBorderColor 100 0 0
+        PlayAlertSound 2
+
+#For Science purposes
+Show
+        Class Currency
+        BaseType "Vaal"
+        SetTextColor 190 0 0
+
+#Vorici crafting and general shenanigans
+Show
+        Class Currency
+        BaseType "Fusi" "Jew" "Chrom"
+        SetBorderColor 46 209 58
+Show
+        Class Currency
+        BaseType "Alch" "Chaos"
+        SetTextColor 213 204 43
+
+#Show all the other non-special currency
+Show
+        Class Map Currency
+Show
+	Class "Body Armours"
+	BaseType "Lamellar" "Brigandine" "Full Dragonscale" "Dragonscale Doublet" "Full Wyrmscale" "Wyrmscale Doublet" "Scale Vest"
+Show
+	Class "Helmets"
+	BaseType "Helm" "Sallet" "Bascinet" "Lacquered Helmet"
+Show
+	Class "Gloves" "Boots"
+	BaseType "scale"
+Show
+        Class "Amulets" "Ring" "Belts"
+        BaseType "Coral" "Leather" "Heavy" "Iron" "Ruby" "Sapphire" "Topaz"
+	
+Hide
