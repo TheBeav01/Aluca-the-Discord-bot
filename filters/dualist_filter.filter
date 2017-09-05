@@ -1,3 +1,5 @@
+
+
 Show
 	Class Quest Jewel Divination Card Gem
 
@@ -41,7 +43,7 @@ Show
         SetTextColor 0 0 0
         SetBorderColor 0 0 0
         PlayAlertSound 1
-        PlayAlertSound 2 
+        PlayAlertSound 2
         PlayAlertSound 3
 #For high level crafting
 Show
@@ -83,5 +85,5 @@ Show
 Show
         Class "Amulets" "Ring" "Belts"
         BaseType "Coral" "Leather" "Heavy" "Iron" "Ruby" "Sapphire" "Topaz"
-	
+
 Hide
