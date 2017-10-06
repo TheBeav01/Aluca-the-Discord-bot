@@ -1,4 +1,4 @@
-package boop;
+package modules;
 
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
@@ -23,7 +23,7 @@ public class VoiceAndPingListener extends ListenerAdapter {
 		// getContent() is a lazy getter which modifies the content for e.g. console
 		// view (strip discord formatting)
 		if (content.equals("!ping") && message.getMember().isOwner()) {
-			channel.sendMessage("Pong! Also sample text!").queue(); // Important to call .queue() on the RestAction returned by
+			channel.sendMessage("Pong :ping_pong:").queue(); // Important to call .queue() on the RestAction returned by
 													// sendMessage(...)
 		}
 		if(content.equals("!kill") && message.getMember().isOwner()) {
