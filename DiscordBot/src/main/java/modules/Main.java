@@ -10,28 +10,22 @@ import net.dv8tion.jda.core.exceptions.RateLimitedException;
 public class Main {
 
 	static JDA api;
+	
+	private static Settings s = new Settings();
 
 
 	public static void main(String[] args) {
 		try {
 		 api = new JDABuilder(AccountType.BOT)
-					.setToken("MzY1NjcxMzUxNDE3MzA3MTM3.DLhu-g.zTnjuiI5p_u-QAk1RqVvqxGE2C8").buildAsync();
-		} catch (LoginException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (RateLimitedException e) {
+					.setToken(s.getToken()).buildAsync();
+		} catch (LoginException | IllegalArgumentException | RateLimitedException e) {
 			e.printStackTrace();
 		}
-		
-		
-		AddListeners();
+		api.addEventListener(new VoiceAndPingListener(), new Settings());
 	}
-
-
-	private static void AddListeners() {
-		AddListener.AddVL(api);
-		AddListener.AddSL(api);
+	
+	public JDA getJDA() {
+		return api;
 	}
 
 }

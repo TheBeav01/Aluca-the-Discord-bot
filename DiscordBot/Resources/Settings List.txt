@@ -1,0 +1,4 @@
+```Current options:
+[1] Set Nickname
+[2] Set Role Color
+```
