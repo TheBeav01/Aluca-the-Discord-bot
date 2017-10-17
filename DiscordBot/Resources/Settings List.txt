@@ -1,4 +1,6 @@
 ```Current options:
 [1] Set Nickname
 [2] Set Role Color
+
+Select a number to get started, or type "exit"
 ```

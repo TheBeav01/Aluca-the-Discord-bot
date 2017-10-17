@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 import Utilities.*;
+import settings.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 public class Settings extends ListenerAdapter {
@@ -11,28 +12,54 @@ public class Settings extends ListenerAdapter {
 	
 	private String token = "MzY3ODkyMjU5MDI4NTk4Nzg0.DMCB5Q.umIX4ORVdVCXa7xsBoB4ookBd5w";
 	MessageReceivedEvent lastSuccessful;
+	static String id;
+	private String settingsInit(MessageReceivedEvent event) {
+		StringBuilder sb = new StringBuilder();
+		Scanner sc = null;
+		File f = new File("Resources/Settings List.txt");
+		try {
+			sc = new Scanner(f);
+			while(sc.hasNext()) {
+				sb.append(sc.nextLine());
+				sb.append(System.lineSeparator());
+			}
+		} catch (FileNotFoundException e) {
+			Notify.NotifyAdmin(e.getMessage() + f.getAbsolutePath(), Main.getJDA().getUserById(OwnerInfo.sId));
+			sb.append("Whoops. Something went wrong! Contact " + Main.getJDA().getUserById(OwnerInfo.sId).getAsMention());
+			
+		}
+//		sc.close();
+		init = true;
+		return sb.toString();
+	}
+	
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
 		lastSuccessful = event;
-		if(event.getAuthor().isBot()) {
-			return;
-		}
-		String content = event.getMessage().getRawContent();
-		if(content.equals("!s")) {
-			lastSuccessful = event;
-			event.getChannel().sendMessage(settingsInit(event)).queue();
-		}
-		
-		else if(content.equals("1") && init) {
-			event.getChannel().sendMessage("`Enter desired role color`").queue();
-		}
-		
-		else if(content.equals("2") && init) {
-			event.getChannel().sendMessage("`Enter desired nickname`").queue();
-		}
-		else if(content.equals("exit") && init) {
-			init = false;
-			event.getChannel().sendMessage("Exiting").queue();
+		if(!RoleColor.isActive()) {
+			if(event.getAuthor().isBot()) {
+				Bot.setMember(event.getMember());
+				return;
+			}
+			String content = event.getMessage().getRawContent();
+			if(content.equals("!s")) {
+				lastSuccessful = event;
+				event.getChannel().sendMessage(settingsInit(event)).queue();
+			}
+			
+			else if(content.equals("1") && init) {
+				event.getChannel().sendMessage("`Enter desired nickname`").queue();
+				Names.Init();
+			}
+			
+			else if(content.equals("2") && init) {
+				event.getChannel().sendMessage("`Enter desired role color`").queue();
+				RoleColor.Init(event);
+			}
+			else if(content.equals("exit") && init) {
+				init = false;
+				event.getChannel().sendMessage("Exiting").queue();
+			}
 		}
 	}
 	
@@ -42,24 +69,6 @@ public class Settings extends ListenerAdapter {
 		return token;
 	}
 	
-	private String settingsInit(MessageReceivedEvent event) {
-		StringBuilder sb = new StringBuilder();
-		Scanner sc = null;
-		File f = new File("Resources/Settings List.tt");
-		try {
-			sc = new Scanner(f);
-			while(sc.hasNext()) {
-				sb.append(sc.nextLine());
-				sb.append(System.lineSeparator());
-			}
-		} catch (FileNotFoundException e) {
-			event.getJDA().getUserById(OwnerInfo.sId);
-			Notify.NotifyAdmin(e.getMessage(), event.getJDA().getUserById(OwnerInfo.sId));
-			
-		}
-//		sc.close();
-		init = true;
-		return sb.toString();
-	}
+	
 
 }

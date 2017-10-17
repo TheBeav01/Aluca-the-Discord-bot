@@ -1,5 +1,7 @@
 package modules;
 
+import Utilities.Notify;
+import Utilities.OwnerInfo;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
@@ -13,43 +15,53 @@ public class VoiceAndPingListener extends ListenerAdapter {
 
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
-		if (event.getAuthor().isBot())
+		if (event.getAuthor().isBot()) {
+			
 			return;
+		}
+			
 		Message message = event.getMessage();
 		m = message.getChannel();
 		String content = message.getRawContent();
 		MessageChannel channel = event.getChannel();
+		try {
 		if (content.equals("!ping") && message.getMember().isOwner()) {
-			channel.sendMessage("Pong :ping_pong: \n Time taken (in ms.): " + channel.getJDA().getPing()).queue(); // Important to call .queue() on the RestAction returned by
-													// sendMessage(...)
+			channel.sendMessage("Pong :ping_pong: \n Time taken (in ms.): " + channel.getJDA().getPing()).queue();
 		}
-		if(content.equals("!kill") && message.getMember().isOwner()) {
+		if (content.equals("!kill") && message.getMember().isOwner()) {
 			channel.sendMessage("Shutting down.").queue();
+			Main.getJDA().shutdown();
 			System.exit(0);
 		}
-		
-		
+		}
+		catch(Exception e) {
+			Notify.NotifyAdmin(e.getMessage(), Main.getJDA().getUserById(OwnerInfo.sId));
+		}
+
 	}
-	
+
 	@Override
 	public void onGuildVoiceJoin(GuildVoiceJoinEvent event) {
-		
+
 		Member member = event.getMember();
-		if(m.getId().equals("365653964613615618")) {
-			m.sendMessage(member.getEffectiveName() + " has joined: " + event.getChannelJoined().getName()).queue();
+		try {
+		event.getGuild().getDefaultChannel()
+				.sendMessage(member.getEffectiveName() + " Has left: " + event.getChannelJoined().getName()).queue();
 		}
-		else {
-			m.sendMessage("Originally intended to send to " + m.getName() + "And the ID is" + m.getId()).queue();
+		catch(Exception e) {
+			Notify.NotifyAdmin(e.getMessage(), Main.getJDA().getUserById(OwnerInfo.sId));
 		}
 	}
+
 	@Override
 	public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
 		Member member = event.getMember();
-		if(m.getId().equals("365653964613615618")) {
-			m.sendMessage(member.getEffectiveName() + " Has left: " + event.getChannelLeft().getName()).queue();
+		try {
+		event.getGuild().getDefaultChannel()
+				.sendMessage(member.getEffectiveName() + " Has left: " + event.getChannelLeft().getName()).queue();
 		}
-		else {
-			m.sendMessage("Originally intended to send to " + m.getName() + "And the ID is" + m.getId()).queue();
+		catch(Exception e) {
+			Notify.NotifyAdmin(e.getMessage(), Main.getJDA().getUserById(OwnerInfo.sId));
 		}
 	}
 
