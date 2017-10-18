@@ -6,10 +6,8 @@ import Utilities.Bot;
 import Utilities.Notify;
 import Utilities.OwnerInfo;
 import modules.Main;
-import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
-import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.managers.GuildController;
@@ -69,6 +67,9 @@ public class RoleColor extends ListenerAdapter implements Execute {
 			gc.addSingleRoleToMember(m, role);
 			Notify.NotifyAdmin(e.toString() + "Size: " + size, Main.getJDA().getUserById(OwnerInfo.sId));
 			return;
+		}
+		catch (Exception e) {
+			Notify.NotifyAdmin(e.toString(), Main.getJDA().getUserById(OwnerInfo.sId));
 		}
 		//If no other roles exist on the bot, nothing can be done. Create a new role and add it to the bot.
 		if(m.getRoles().size() == 1) {

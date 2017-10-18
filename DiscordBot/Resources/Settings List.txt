@@ -1,6 +1,7 @@
 ```Current options:
 [1] Set Nickname
 [2] Set Role Color
+[3] Add Join/Leave messages to this channel.
 
 Select a number to get started, or type "exit"
 ```

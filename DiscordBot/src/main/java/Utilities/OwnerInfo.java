@@ -1,6 +1,5 @@
 package Utilities;
 
-import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 
 public class OwnerInfo {

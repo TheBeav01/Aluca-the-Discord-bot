@@ -8,9 +8,8 @@ import settings.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 public class Settings extends ListenerAdapter {
-	private boolean init = false;
+	private static boolean init = false;
 	
-	private String token = "MzY3ODkyMjU5MDI4NTk4Nzg0.DMCB5Q.umIX4ORVdVCXa7xsBoB4ookBd5w";
 	MessageReceivedEvent lastSuccessful;
 	static String id;
 	private String settingsInit(MessageReceivedEvent event) {
@@ -56,6 +55,9 @@ public class Settings extends ListenerAdapter {
 				event.getChannel().sendMessage("`Enter desired role color`").queue();
 				RoleColor.Init(event);
 			}
+			else if(content.equals("3") && init) {
+				event.getChannel().sendMessage("`Enable VC join/leave in this channel? Y/N`").queue();
+			}
 			else if(content.equals("exit") && init) {
 				init = false;
 				event.getChannel().sendMessage("Exiting").queue();
@@ -63,12 +65,11 @@ public class Settings extends ListenerAdapter {
 		}
 	}
 	
-
-	
-	protected String getToken() {
-		return token;
+	public static boolean getInitialized() {
+		return init;
 	}
-	
-	
+	public static void setInitialized(boolean setInit) {
+		init = setInit;
+	}
 
 }

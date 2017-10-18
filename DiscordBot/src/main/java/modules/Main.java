@@ -1,12 +1,13 @@
 package modules;
 
+import java.io.FileNotFoundException;
+
 import javax.security.auth.login.LoginException;
 
 import Utilities.Bot;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
-import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
 import settings.*;
 
@@ -14,16 +15,14 @@ public class Main {
 
 	static JDA api;
 	static Bot b;
-	private static Settings s = new Settings();
 
 
-	public static void main(String[] args) {
-		
+	public static void main(String[] args) throws FileNotFoundException {
 		b = new Bot();
 		
 		try {
 		 api = new JDABuilder(AccountType.BOT)
-					.setToken(s.getToken()).buildAsync();
+					.setToken(Bot.getToken()).buildAsync();
 		} catch (LoginException | IllegalArgumentException | RateLimitedException e) {
 			e.printStackTrace();
 		}
