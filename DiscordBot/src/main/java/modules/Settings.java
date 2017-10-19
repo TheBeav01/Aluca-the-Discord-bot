@@ -48,8 +48,7 @@ public class Settings extends ListenerAdapter {
 			}
 			
 			else if(content.equals("1") && init) {
-				event.getChannel().sendMessage("`Enter desired nickname`").queue();
-				Names.Init();
+				Names.Init(event);
 			}
 			
 			else if(content.equals("2") && init) {

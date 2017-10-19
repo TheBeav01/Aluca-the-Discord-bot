@@ -1,6 +1,5 @@
 package Utilities;
 
-//import com.mysql.jdbc.*;
 import java.sql.*;
 
 public class DBUtils {
