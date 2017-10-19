@@ -10,23 +10,28 @@ public class Names extends ListenerAdapter implements Execute {
 	public static final String RESET = "Clear";
 	private boolean isActive;
 	private GuildController gc;
-
+	private GuildManager gm;
+	private long messageID;
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
 		if (event.getAuthor().isBot() && event.getMessage().getRawContent().matches(MESSAGE)) {
 			Bot.setMember(event.getMember());
 			isActive = true;
 		} else if (!event.getAuthor().isBot() && isActive && event.getAuthor().getId().matches(Bot.getOwnerID())) {
+			messageID = event.getMessageIdLong();
 			gc = new GuildController(event.getGuild());
 			isActive = false;
+			
 			String name = event.getMessage().getRawContent();
 			try {
 				if (name.matches(RESET)) {
 					gc.setNickname(Bot.getMember(), null).queue();
+					event.getChannel().deleteMessageById(messageID).queue();
 					event.getChannel().sendMessage("Name reset").queue();
 					Bot.setNickname(Bot.nickName);
 				} else {
 					gc.setNickname(Bot.getMember(), name).queue();
+					event.getChannel().deleteMessageById(messageID).queue();
 					event.getChannel().sendMessage("Name set to " + name).queue();
 					Bot.setNickname(name);
 				}
