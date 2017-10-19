@@ -3,13 +3,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+import com.typesafe.config.Config;
+
 import Utilities.*;
 import settings.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 public class Settings extends ListenerAdapter {
-	private static boolean init = false;
-	
+	private static boolean init = false;	
 	MessageReceivedEvent lastSuccessful;
 	static String id;
 	private String settingsInit(MessageReceivedEvent event) {

@@ -2,3 +2,7 @@
 .project
 .settings./
 .classpath
+/Resources/*.txt
+/Resources/*.json
+
+
