@@ -3,8 +3,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-import com.typesafe.config.Config;
-
 import Utilities.*;
 import settings.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;

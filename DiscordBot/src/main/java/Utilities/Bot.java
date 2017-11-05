@@ -17,7 +17,6 @@ public class Bot {
 	private Game game;
 	private JDA jda;
 	private static Member member;
-	private User u;
 	public Bot() {
 		nickName = "Aluca, the Roboderg";
 		displayName = "Aluca, the Roboderg";
@@ -78,5 +77,7 @@ public class Bot {
 	public static User getAdmin() {
 		return Main.getJDA().getUserById(Bot.getOwnerID());
 	}
-	
+	public static String getDisplayName() {
+		return displayName;
+	}
 }

@@ -1,18 +1,17 @@
 package modules;
 
-import java.util.List;
 import Utilities.Bot;
 import Utilities.DBUtils;
 import Utilities.Notify;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.MessageChannel;
-import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
+import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+
+import java.util.List;
 
 public class VoiceAndPingListener extends ListenerAdapter {
 
@@ -29,7 +28,8 @@ public class VoiceAndPingListener extends ListenerAdapter {
 		MessageChannel channel = event.getChannel();
 		try {
 			if (content.equals("!ping")) {
-				channel.sendMessage("Pong :ping_pong: \n Time taken (in ms.): " + channel.getJDA().getPing()).queue();
+				long ping = channel.getJDA().getPing();
+				channel.sendMessage(":ping_pong: \n Time taken: " + ping + "ms" ).queue();
 			}
 			if (content.equals("!kill") && message.getMember().isOwner()) {
 				channel.sendMessage("Shutting down.").queue();
@@ -38,8 +38,8 @@ public class VoiceAndPingListener extends ListenerAdapter {
 			}
 
 			if (content.equals("Y") && message.getMember().isOwner() && Settings.getInitialized()) {
-				if (!DBUtils.getID(channel.getId())) {
-					if(!DBUtils.setID(channel.getId())) {
+				if (!DBUtils.getWhitelistID(channel.getId())) {
+					if(!DBUtils.setWhitelist(channel.getId())) {
 						throw new IllegalArgumentException("Was not found");
 					}
 					channel.sendMessage("Added channel " + channel.getName() + "to the list of approved channels")
@@ -71,7 +71,6 @@ public class VoiceAndPingListener extends ListenerAdapter {
 		}
 
 		try {
-			Notify.NotifyAdmin(m.getName(), Bot.getAdmin());
 			m.sendMessage(member.getEffectiveName() + " has joined " + event.getChannelJoined().getName()).queue();
 		} catch (Exception e) {
 			Notify.NotifyAdmin(e.getMessage(), Bot.getAdmin());
@@ -87,7 +86,7 @@ public class VoiceAndPingListener extends ListenerAdapter {
 	private MessageChannel FindChannel(Guild guild) {
 		List<TextChannel> guildList = guild.getTextChannels();
 		for(int i = 0; i < guildList.size(); i++) {
-			if(DBUtils.getID(guildList.get(i).getId())) {
+			if(DBUtils.getWhitelistID(guildList.get(i).getId())) {
 				return guildList.get(i);
 			}
 		}
@@ -109,6 +108,18 @@ public class VoiceAndPingListener extends ListenerAdapter {
 		} catch (Exception e) {
 			Notify.NotifyAdmin(e.getMessage(), Bot.getAdmin());
 		}
+	}
+
+	@Override
+	public void onGuildMemberJoin(GuildMemberJoinEvent event) {
+		Member m = event.getMember();
+		String id = m.getUser().getId();
+
+	}
+
+	@Override
+	public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
+
 	}
 
 }

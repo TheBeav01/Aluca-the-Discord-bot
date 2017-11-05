@@ -10,7 +10,6 @@ public class Names extends ListenerAdapter implements Execute {
 	public static final String RESET = "Clear";
 	private boolean isActive;
 	private GuildController gc;
-	private GuildManager gm;
 	private long messageID;
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {

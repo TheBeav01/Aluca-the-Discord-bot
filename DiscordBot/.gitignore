@@ -1,8 +1,11 @@
 /target/
 .project
-.settings./
+.settings/
 .classpath
+*.iml
+
 /Resources/*.txt
 /Resources/*.json
-
-
+/Resources/lib/
+.idea
+/out
