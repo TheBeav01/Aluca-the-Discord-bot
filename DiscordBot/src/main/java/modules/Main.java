@@ -1,19 +1,19 @@
 package modules;
 
-import java.io.FileNotFoundException;
-
-import javax.security.auth.login.LoginException;
-
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
-
 import Utilities.Bot;
 import Utilities.DBUtils;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
-import settings.*;
+import settings.Names;
+import settings.RoleColor;
+
+import javax.security.auth.login.LoginException;
+import java.io.File;
+import java.io.FileNotFoundException;
 
 public class Main {
 	static Config conf;
@@ -22,7 +22,8 @@ public class Main {
 
 
 	public static void main(String[] args) throws FileNotFoundException {
-		conf = ConfigFactory.defaultApplication();
+		conf = ConfigFactory.parseFile(new File("C:/Users/Alex Beaver/Documents/git/Personal-fun-stuff/DiscordBot/Resources/application.json"));
+		System.out.println(conf.entrySet());
 		b = new Bot();
 		DBUtils.Connect();
 		try {

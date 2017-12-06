@@ -74,7 +74,6 @@ public class VoiceAndPingListener extends ListenerAdapter {
 		} catch (Exception e) {
 			Notify.NotifyAdmin(e.getMessage(), Bot.getAdmin());
 		}
-
 	}
 
 	@Override

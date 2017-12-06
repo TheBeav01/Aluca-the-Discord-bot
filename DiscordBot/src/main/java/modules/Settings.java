@@ -1,12 +1,15 @@
 package modules;
+import Utilities.Bot;
+import Utilities.Notify;
+import Utilities.OwnerInfo;
+import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import settings.Names;
+import settings.RoleColor;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
-
-import Utilities.*;
-import settings.*;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
 public class Settings extends ListenerAdapter {
 	private static boolean init = false;	
 	MessageReceivedEvent lastSuccessful;
@@ -14,7 +17,8 @@ public class Settings extends ListenerAdapter {
 	private String settingsInit(MessageReceivedEvent event) {
 		StringBuilder sb = new StringBuilder();
 		Scanner sc = null;
-		File f = new File("Resources/Settings List.txt");
+		File f = new File(Main.conf.getString("settings-Path"));
+
 		try {
 			sc = new Scanner(f);
 			while(sc.hasNext()) {
