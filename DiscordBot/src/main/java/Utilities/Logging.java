@@ -34,7 +34,7 @@ public class Logging {
         Date d = new Date();
         String format = df.format(d).replace('/','_');
         format = format.replace(':', '_');
-        System.out.println(format);
+        System.out.println(Main.conf.isEmpty());
         fileName = Main.conf.getString("log-base-path") + format + ".txt";
         return fileName;
     }
