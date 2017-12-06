@@ -8,7 +8,7 @@ public class DBUtils {
     private static String driver;
     private static String URL = DBConstants.DB_URL;
     private static ResultSet r;
-
+    public static int joined, left;
     public static boolean Connect() {
         driver = "com.mysql.jdbc.Driver";
         try {
@@ -66,16 +66,34 @@ public class DBUtils {
             if (!r.first()) {
                 String insert = "INSERT INTO `aluca-the-dergbot`.`guildlist` " +
                         "(guildName, guildID, userID, timesJoined, timesLeft) VALUES (?,?,?,?,?);";
+                ps = DBCon.prepareStatement(insert);
                 ps.setString(1,guildName);
                 ps.setString(2,guildID);
                 ps.setString(3, userID);
                 ps.setInt(4,0);
                 ps.setInt(5,0);
+                ps.execute();
+                return true;
+            }
+            else {
+                if(hasJoined) {
+                   joined =  r.getInt(4);
+                   joined++;
+                   String update = "UPDATE `aluca-the-dergbot`.`guildlist` SET timesJoined = ? WHERE userID = ?";
+                   ps = DBCon.prepareStatement(update);
+                   ps.setInt(4,joined);
+                }
+                else {
+                    left =  r.getInt(4);
+                    left++;
+                    String update = "UPDATE `aluca-the-dergbot`.`guildlist` SET timesLeft = ? WHERE userID = ?";
+                    ps = DBCon.prepareStatement(update);
+                    ps.setInt(5,left);
+                }
             }
         } catch (SQLException e) {
-
+            Notify.NotifyAdmin("An error occurred!" + e.toString(), Bot.getAdmin());
         }
-        statement = "INSERT INTO `aluca-the-dergbot`.`guildlist`(guildName, guildID, userID, timesJoined, timesLeft) VALUES (?,?,?,?,?)";
         return false;
     }
 }

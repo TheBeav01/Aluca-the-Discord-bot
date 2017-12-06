@@ -3,6 +3,7 @@ package modules;
 import Utilities.Bot;
 import Utilities.DBUtils;
 import Utilities.Notify;
+import Utilities.StringUtils;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
@@ -19,19 +20,19 @@ public class VoiceAndPingListener extends ListenerAdapter {
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
 		if (event.getAuthor().isBot()) {
-
 			return;
 		}
 
 		Message message = event.getMessage();
 		String content = message.getRawContent();
 		MessageChannel channel = event.getChannel();
+		System.out.println("Boop!");
 		try {
-			if (content.equals("!ping")) {
+			if (content.startsWith("!ping")) {
 				long ping = channel.getJDA().getPing();
 				channel.sendMessage(":ping_pong: \n Time taken: " + ping + "ms" ).queue();
 			}
-			if (content.equals("!kill") && message.getMember().isOwner()) {
+			if (content.startsWith("!kill") && message.getMember().isOwner()) {
 				channel.sendMessage("Shutting down.").queue();
 				Main.getJDA().shutdown();
 				System.exit(0);
@@ -55,6 +56,21 @@ public class VoiceAndPingListener extends ListenerAdapter {
 				Settings.setInitialized(false);
 				return;
 			}
+
+            if(content.startsWith("!del")) {
+                int x = StringUtils.SplitNumber(content);
+                int i = 0;
+                System.out.println(x);
+                for(Message messages : event.getChannel().getIterableHistory()) {
+                    if(i > x) {
+                        break;
+                    }
+                    else {
+                        messages.delete().queue();
+                        i++;
+                    }
+                }
+            }
 		} catch (Exception e) {
 			Notify.NotifyAdmin(e.getMessage(), Bot.getAdmin());
 		}
@@ -114,11 +130,19 @@ public class VoiceAndPingListener extends ListenerAdapter {
 	public void onGuildMemberJoin(GuildMemberJoinEvent event) {
 		Member m = event.getMember();
 		String id = m.getUser().getId();
+		boolean joined = DBUtils.setGuildUser(event.getGuild().getName(), event.getGuild().getId(), id, true);
+		StringBuilder sb = new StringBuilder();
+		if(joined) {
+			sb.append("User: " + m.getEffectiveName() + "Has joined \n" + event.getGuild().getName() +
+					"User has joined: " + DBUtils.joined + "times");
 
+		}
 	}
 
 	@Override
 	public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
+		Member m = event.getMember();
+		String id = m.getUser().getId();
 
 	}
 
