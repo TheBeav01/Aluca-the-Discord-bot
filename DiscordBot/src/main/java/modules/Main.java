@@ -2,6 +2,7 @@ package modules;
 
 import Utilities.Bot;
 import Utilities.DBUtils;
+import Utilities.Logging;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import net.dv8tion.jda.core.AccountType;
@@ -14,18 +15,17 @@ import settings.RoleColor;
 import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.logging.Level;
 
 public class Main {
-	static Config conf;
+	public static Config conf;
 	static JDA api;
 	static Bot b;
-
+	static Logging logger;
 
 	public static void main(String[] args) throws FileNotFoundException {
-		conf = ConfigFactory.parseFile(new File("C:/Users/Alex Beaver/Documents/git/Personal-fun-stuff/DiscordBot/Resources/application.json"));
-		System.out.println(conf.entrySet());
-		b = new Bot();
-		DBUtils.Connect();
+		initMain();
 		try {
 		 api = new JDABuilder(AccountType.BOT)
 					.setToken(conf.getString("token")).buildAsync();
@@ -45,4 +45,20 @@ public class Main {
 		return b;
 	}
 
+	private static void initMain() {
+		logger = new Logging();
+		String filePath = "Resources/application.json";
+		conf = ConfigFactory.parseFile(new File(filePath));
+		System.out.println(conf.entrySet());
+		b = new Bot();
+
+		DBUtils.Connect();
+		try {
+			logger.CreateLog(logger.buildFileName());
+			logger.log("Log file created!", Level.INFO, "Init");
+			logger.log("Config file loaded from: " + filePath, Level.INFO, "Init");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

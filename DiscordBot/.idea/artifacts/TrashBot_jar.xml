@@ -15,6 +15,11 @@
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/squareup/okio/okio/1.13.0/okio-1.13.0.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/json/json/20160810/json-20160810.jar" path-in-jar="/" />
+      <element id="directory" name="Resources">
+        <element id="file-copy" path="$PROJECT_DIR$/Resources/application.json" />
+        <element id="file-copy" path="$PROJECT_DIR$/Resources/Server List.txt" />
+        <element id="file-copy" path="$PROJECT_DIR$/Resources/Settings List.txt" />
+      </element>
     </root>
   </artifact>
 </component>

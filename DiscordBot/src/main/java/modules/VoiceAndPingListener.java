@@ -13,6 +13,7 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 import java.util.List;
+import java.util.logging.Level;
 
 public class VoiceAndPingListener extends ListenerAdapter {
 
@@ -26,21 +27,22 @@ public class VoiceAndPingListener extends ListenerAdapter {
 		Message message = event.getMessage();
 		String content = message.getRawContent();
 		MessageChannel channel = event.getChannel();
-		System.out.println("Boop!");
 		try {
 			if (content.startsWith("!ping")) {
 				long ping = channel.getJDA().getPing();
-				channel.sendMessage(":ping_pong: \n Time taken: " + ping + "ms" ).queue();
+				channel.sendMessage(":ping_pong: \n Time taken: " + ping + "ms").queue();
 			}
 			if (content.startsWith("!kill") && message.getMember().isOwner()) {
 				channel.sendMessage("Shutting down.").queue();
+				Main.logger.log("END OF LOG FILE \n ------------------------------------------------",Level.INFO,"Shutdown");
+				Main.logger.close();
 				Main.getJDA().shutdown();
 				System.exit(0);
 			}
 
 			if (content.equals("Y") && message.getMember().isOwner() && Settings.getInitialized()) {
 				if (!DBUtils.getWhitelistID(channel.getId())) {
-					if(!DBUtils.setWhitelist(channel.getId())) {
+					if (!DBUtils.setWhitelist(channel.getId())) {
 						throw new IllegalArgumentException("Was not found");
 					}
 					channel.sendMessage("Added channel " + channel.getName() + "to the list of approved channels")
@@ -57,22 +59,25 @@ public class VoiceAndPingListener extends ListenerAdapter {
 				return;
 			}
 
-            if(content.startsWith("!del")) {
-                int x = StringUtils.SplitNumber(content);
-                int i = 0;
-                System.out.println(x);
-                for(Message messages : event.getChannel().getIterableHistory()) {
-                    if(i > x) {
-                        break;
-                    }
-                    else {
-                        messages.delete().queue();
-                        i++;
-                    }
-                }
-            }
-		} catch (Exception e) {
-			Notify.NotifyAdmin(e.getMessage(), Bot.getAdmin());
+			if (content.startsWith("!del")) {
+
+				int x = StringUtils.SplitNumber(content);
+				int i = 0;
+				for (Message messages : event.getChannel().getIterableHistory()) {
+					if (i > x) {
+						break;
+					} else {
+						Main.logger.log("From: " + messages.getAuthor().getName() + ": " + messages.getRawContent(),
+								Level.INFO, "delete");
+						messages.delete().queue();
+						i++;
+					}
+				}
+
+			}
+		}
+		catch (Exception e) {
+			Notify.NotifyAdmin(e.toString(), Bot.getAdmin());
 		}
 	}
 

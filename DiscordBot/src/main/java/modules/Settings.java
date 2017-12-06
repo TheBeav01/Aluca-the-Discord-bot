@@ -18,7 +18,6 @@ public class Settings extends ListenerAdapter {
 		StringBuilder sb = new StringBuilder();
 		Scanner sc = null;
 		File f = new File(Main.conf.getString("settings-Path"));
-
 		try {
 			sc = new Scanner(f);
 			while(sc.hasNext()) {
