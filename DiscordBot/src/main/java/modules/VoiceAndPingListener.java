@@ -27,11 +27,6 @@ public class VoiceAndPingListener extends ListenerAdapter {
 		Message message = event.getMessage();
 		String content = message.getRawContent();
 		MessageChannel channel = event.getChannel();
-		if(Main.conf.getInt("log-messages") == 1) {
-			Main.logger.log("From :" + event.getAuthor() + " in: " + event.getGuild().getName() +
-							"(Channel: " + event.getChannel().getName() + ")" +
-					" - " + content,Level.INFO,"Message");
-		}
 		try {
 			if (content.startsWith("!ping")) {
 				long ping = channel.getJDA().getPing();
