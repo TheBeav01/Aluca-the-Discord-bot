@@ -13,10 +13,11 @@ public class Bot {
 	private static final String DISCRIMINATOR = "0544";
 	private static final String ID = "367892259028598784";
 	private static final String OWNER_ID = "192705186324676608";
-	
+
 	private Game game;
 	private JDA jda;
 	private static Member member;
+	private static User user;
 	public Bot() {
 		nickName = "Aluca, the Roboderg";
 		displayName = "Aluca, the Roboderg";
@@ -42,6 +43,8 @@ public class Bot {
 	
 	public static void setMember(Member m) {
 		Bot.member = m;
+		System.out.println(m.getNickname());
+//		Bot.user = m.getUser();
 	}
 	
 	public void setGame(String s) {
@@ -79,5 +82,19 @@ public class Bot {
 	}
 	public static String getDisplayName() {
 		return displayName;
+	}
+	public static User getUser() {
+		return user;
+	}
+	public static void setUser(String ID) {
+		User u = Main.getJDA().getUserById(ID);
+		Bot.user = Main.getJDA().getUserById(ID);
+		try {
+			Thread.sleep(10);
+			System.out.println("Boop");
+
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 }

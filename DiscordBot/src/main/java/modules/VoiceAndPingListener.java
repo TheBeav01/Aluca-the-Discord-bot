@@ -23,7 +23,6 @@ public class VoiceAndPingListener extends ListenerAdapter {
 		if (event.getAuthor().isBot()) {
 			return;
 		}
-
 		Message message = event.getMessage();
 		String content = message.getRawContent();
 		MessageChannel channel = event.getChannel();
@@ -73,7 +72,9 @@ public class VoiceAndPingListener extends ListenerAdapter {
 						i++;
 					}
 				}
-
+			}
+			if(content.contains(event.getGuild().getMember(Main.getJDA().getUserById(Bot.getBotID())).getAsMention())) {
+				channel.sendMessage(":ping_pong:").queue();
 			}
 		}
 		catch (Exception e) {
