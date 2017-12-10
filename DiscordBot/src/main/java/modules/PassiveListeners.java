@@ -9,29 +9,35 @@ import net.dv8tion.jda.core.entities.*;
 import java.util.logging.Level;
 
 public class PassiveListeners extends MessageHandler {
-	private String test;
-	private User u;
-	private String defaultContent;
+	private String message;
+	private User user;
+	private Member member;
+	private Guild guild;
+	private MessageChannel channel;
 	public PassiveListeners() {
 		super();
-		test = "foo";
+		System.out.println("Passive listener constructor");
+	}
+	public PassiveListeners(String s) {
+		message = s;
+		System.out.println("Secondary constructor");
 	}
 	public void executeCommands(String message, User user, Member member, Guild guild, MessageChannel channel) {
 		setFields(message, user, member, guild, channel);
 
 		try {
-			if (message.contains(PREFIX+"ping")) {
+			if (message.contains("ping")) {
 				long ping = channel.getJDA().getPing();
 				sendMessage(":ping_pong: \n Time taken: " + ping + "ms");
 			}
-			if (message.contains(PREFIX+"kill") && member.isOwner()) {
+			if (message.contains("kill") && member.isOwner()) {
 				sendMessage("Shutting down.");
 				Main.logger.log("END OF LOG FILE \n ------------------------------------------------", Level.INFO,"Shutdown");
 				Main.logger.close();
 				Main.getJDA().shutdown();
 				System.exit(0);
 			}
-			if (message.contains(PREFIX+"del")) {
+			if (message.contains("del")) {
 
 				int x = StringUtils.SplitNumber(message);
 				int i = 0;

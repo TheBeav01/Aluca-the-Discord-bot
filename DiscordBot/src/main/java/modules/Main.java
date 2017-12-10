@@ -35,7 +35,6 @@ public class Main {
 			e.printStackTrace();
 		}
 		b.setJDA(api);
-		VAPLR = new PassiveListeners();
 		mh = new MessageHandler();
 		api.addEventListener(mh, new Settings(), new RoleColor(), new Names());
 		api.getPresence().setGame(b.getGame());

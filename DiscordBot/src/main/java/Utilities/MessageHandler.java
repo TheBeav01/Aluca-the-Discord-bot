@@ -1,6 +1,6 @@
 package Utilities;
 
-import modules.*;
+import modules.PassiveListeners;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
@@ -19,13 +19,8 @@ public class MessageHandler extends ListenerAdapter {
     private MessageChannel channel;
     public char PREFIX = '!';
     public boolean executableCommand;
-    private PassiveListeners VAPLR = Main.getVAPLR();
     private String test;
 
-//    public MessageHandler() {
-//        test = "1";
-//        messageText = getMessageText();
-//    }
     /**
      * In this class, it's the setter for each variable. Furthermore, this
      * @param messageEvent
@@ -40,10 +35,17 @@ public class MessageHandler extends ListenerAdapter {
         guildMember = messageEvent.getMember();
         guild = messageEvent.getGuild();
         channel = messageEvent.getChannel();
+        if(message.getAuthor().isBot()) {
+            return;
+        }
         if(StringUtils.isValidCommand(messageText)) {
-            VAPLR.executeCommands(messageText, user, guildMember, guild, channel);
+            commandHandler(StringUtils.getCommand(messageText));
+
+
         }
     }
+
+
 
     /**
      *Sends a message to the channel the command was initiated in.
@@ -60,5 +62,17 @@ public class MessageHandler extends ListenerAdapter {
         this.guildMember = member;
         this.guild = guild;
         this.channel = channel;
+    }
+
+    private void commandHandler(String command) {
+        if(command.startsWith(PREFIX+"s")) {
+            System.out.println("Branched to settings");
+
+        }
+        else {
+            System.out.println("Branched to main listener");
+            PassiveListeners p = new PassiveListeners(command);
+            p.executeCommands(command, user, guildMember, guild, channel);
+        }
     }
 }

@@ -30,7 +30,7 @@ public class StringUtils {
         return false;
     }
 
-    private static String getCommand(String s) {
+    public static String getCommand(String s) {
         String newS = s.substring(1);
         return newS;
     }
