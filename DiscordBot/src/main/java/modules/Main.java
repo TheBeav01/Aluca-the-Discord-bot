@@ -3,6 +3,7 @@ package modules;
 import Utilities.Bot;
 import Utilities.DBUtils;
 import Utilities.Logging;
+import Utilities.MessageHandler;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import net.dv8tion.jda.core.AccountType;
@@ -23,7 +24,8 @@ public class Main {
 	static JDA api;
 	static Bot b;
 	static Logging logger;
-
+	static MessageHandler mh;
+	static PassiveListeners VAPLR;
 	public static void main(String[] args) throws FileNotFoundException {
 		initMain();
 		try {
@@ -33,7 +35,9 @@ public class Main {
 			e.printStackTrace();
 		}
 		b.setJDA(api);
-		api.addEventListener(new VoiceAndPingListener(), new Settings(), new RoleColor(), new Names());
+		VAPLR = new PassiveListeners();
+		mh = new MessageHandler();
+		api.addEventListener(mh, new Settings(), new RoleColor(), new Names());
 		api.getPresence().setGame(b.getGame());
 	}
 	
@@ -44,14 +48,18 @@ public class Main {
 	public static Bot getBot() {
 		return b;
 	}
-
+	public static PassiveListeners getVAPLR() {
+		return VAPLR;
+	}
+	public static MessageHandler getMessageHandler() {
+		return mh;
+	}
 	private static void initMain() {
 		logger = new Logging();
 		String filePath = "Resources/application.json";
 		conf = ConfigFactory.parseFile(new File(filePath));
 		System.out.println(conf.entrySet());
 		b = new Bot();
-
 		DBUtils.Connect();
 		try {
 			logger.CreateLog(logger.buildFileName());

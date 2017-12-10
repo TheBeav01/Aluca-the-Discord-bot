@@ -43,17 +43,38 @@ public class DBUtils {
         return true;
     }
 
-    public static boolean setWhitelist(String ID) {
-        statement = "INSERT INTO `aluca-the-dergbot`.`VC-whitelist`(ChannelID) VALUES (?)";
+    /**
+     *
+     * @param ChID the channel ID
+     * @param GID the guild ID
+     * @return
+     */
+    public static int setWhitelist(String ChID, String GID) {
+        statement = "SELECT GuildID FROM `aluca-the-dergbot`.`vc-whitelist` WHERE GuildID = ?";
         try {
             PreparedStatement ps = DBCon.prepareStatement(statement);
-            ps.setString(1, ID);
-            ps.execute();
-            return true;
+            ps.setString(1,GID);
+            r = ps.executeQuery();
+            if(!r.first()) {
+                String insert = "INSERT INTO `aluca-the-dergbot`.`vc-whitelist` " + "(ChannelID, GuildID) VALUES(?,?)";
+                ps = DBCon.prepareStatement(insert);
+                ps.setString(1,ChID);
+                ps.setString(2,GID);
+                ps.execute();
+                return 0;
+            }
+            else {
+                String update = "UPDATE `aluca-the-dergbot`.`vc-whitelist` SET ChannelID = ? WHERE GuildID = ?";
+                ps = DBCon.prepareStatement(update);
+                ps.setString(1, ChID);
+                ps.setString(2,GID);
+                ps.execute();
+                return 1;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             Notify.NotifyAdmin("setWhitelist caught an exception: " + e.getMessage() + " " + e.getErrorCode(), Bot.getAdmin());
-            return false;
+            return -1;
         }
     }
 
