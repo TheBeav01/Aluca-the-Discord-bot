@@ -1,6 +1,9 @@
 package Utilities;
 
+import modules.Main;
+
 import java.sql.*;
+import java.util.logging.Level;
 
 public class DBUtils {
     public static Connection DBCon;
@@ -33,6 +36,7 @@ public class DBUtils {
             ps.setString(1, ID);
             r = ps.executeQuery();
             if (!r.first()) {
+                System.out.println("Search returned false");
                 return false;
             }
         } catch (SQLException e) {
@@ -56,11 +60,12 @@ public class DBUtils {
             ps.setString(1,GID);
             r = ps.executeQuery();
             if(!r.first()) {
-                String insert = "INSERT INTO `aluca-the-dergbot`.`vc-whitelist` " + "(ChannelID, GuildID) VALUES(?,?)";
+                String insert = "INSERT INTO `aluca-the-dergbot`.`vc-whitelist`" + "(ChannelID, GuildID) VALUES(?,?)";
                 ps = DBCon.prepareStatement(insert);
                 ps.setString(1,ChID);
                 ps.setString(2,GID);
                 ps.execute();
+                Main.logger.log("Insert preformed", Level.INFO,"DB");
                 return 0;
             }
             else {
@@ -69,6 +74,7 @@ public class DBUtils {
                 ps.setString(1, ChID);
                 ps.setString(2,GID);
                 ps.execute();
+                Main.logger.log("Update preformed", Level.INFO,"DB");
                 return 1;
             }
         } catch (SQLException e) {
@@ -94,6 +100,7 @@ public class DBUtils {
                 ps.setInt(4,0);
                 ps.setInt(5,0);
                 ps.execute();
+                Main.logger.log("Guild user set", Level.INFO,"DB");
                 return true;
             }
             else {
@@ -102,14 +109,20 @@ public class DBUtils {
                    joined++;
                    String update = "UPDATE `aluca-the-dergbot`.`guildlist` SET timesJoined = ? WHERE userID = ?";
                    ps = DBCon.prepareStatement(update);
-                   ps.setInt(4,joined);
+                   ps.setInt(1,joined);
+                   ps.setString(2,userID);
+                   ps.execute();
+                    Main.logger.log("Joined count updated", Level.INFO,"DB");
                 }
                 else {
                     left =  r.getInt(4);
                     left++;
                     String update = "UPDATE `aluca-the-dergbot`.`guildlist` SET timesLeft = ? WHERE userID = ?";
                     ps = DBCon.prepareStatement(update);
-                    ps.setInt(5,left);
+                    ps.setInt(1,left);
+                    ps.setString(2,userID);
+                    ps.execute();
+                    Main.logger.log("Insert preformed", Level.INFO,"DB");
                 }
             }
         } catch (SQLException e) {

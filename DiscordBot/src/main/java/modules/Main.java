@@ -23,7 +23,7 @@ public class Main {
 	public static Config conf;
 	static JDA api;
 	static Bot b;
-	static Logging logger;
+	public static Logging logger;
 	static MessageHandler mh;
 	static PassiveListeners VAPLR;
 	public static void main(String[] args) throws FileNotFoundException {

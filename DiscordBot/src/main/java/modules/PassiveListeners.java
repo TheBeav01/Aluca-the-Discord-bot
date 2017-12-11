@@ -1,9 +1,6 @@
 package modules;
 
-import Utilities.Bot;
-import Utilities.MessageHandler;
-import Utilities.Notify;
-import Utilities.StringUtils;
+import Utilities.*;
 import net.dv8tion.jda.core.entities.*;
 
 import java.util.logging.Level;
@@ -14,32 +11,36 @@ public class PassiveListeners extends MessageHandler {
 	private Member member;
 	private Guild guild;
 	private MessageChannel channel;
+
 	public PassiveListeners() {
 		super();
 		System.out.println("Passive listener constructor");
 	}
+
 	public PassiveListeners(String s) {
 		message = s;
 		System.out.println("Secondary constructor");
 	}
-	public void executeCommands(String message, User user, Member member, Guild guild, MessageChannel channel) {
-		setFields(message, user, member, guild, channel);
+
+	public void executeCommands(String strippedMessage, String rawMessage, User user, Member member, Guild guild, MessageChannel channel) {
+		setFields(strippedMessage, user, member, guild, channel);
 
 		try {
-			if (message.contains("ping")) {
+			System.out.println(rawMessage);
+			if (strippedMessage.contains("ping")) {
 				long ping = channel.getJDA().getPing();
 				sendMessage(":ping_pong: \n Time taken: " + ping + "ms");
 			}
-			if (message.contains("kill") && member.isOwner()) {
+			if (strippedMessage.contains("kill") && member.isOwner()) {
 				sendMessage("Shutting down.");
-				Main.logger.log("END OF LOG FILE \n ------------------------------------------------", Level.INFO,"Shutdown");
+				Main.logger.log("END OF LOG FILE \n ------------------------------------------------", Level.INFO, "Shutdown");
 				Main.logger.close();
 				Main.getJDA().shutdown();
 				System.exit(0);
 			}
-			if (message.contains("del")) {
+			if (strippedMessage.contains("del")) {
 
-				int x = StringUtils.SplitNumber(message);
+				int x = StringUtils.SplitNumber(strippedMessage);
 				int i = 0;
 				for (Message messages : channel.getIterableHistory()) {
 					if (i > x) {
@@ -51,35 +52,32 @@ public class PassiveListeners extends MessageHandler {
 						i++;
 					}
 				}
-//			}
-//			if(content.contains(event.getGuild().getMember(Main.getJDA().getUserById(Bot.getBotID())).getAsMention())) {
-//				channel.sendMessage(":ping_pong:").queue();
-//			}
-
-//			if (content.equals("Y") && message.getMember().isOwner() && Settings.getInitialized()) {
-//				if (!DBUtils.getWhitelistID(channel.getId())) {
-//					if (DBUtils.setWhitelist(channel.getId(), event.getGuild().getId()) == -1) {
-//						throw new IllegalArgumentException("Was not found");
-//					} else if (DBUtils.setWhitelist(channel.getId(), event.getGuild().getId()) == 0) {
-//						channel.sendMessage("Added channel " + channel.getName() + "to the list of approved channels")
-//								.queue();
-//						return;
-//					} else {
-//						channel.sendMessage("Channel has been adjusted.").queue();
-//						return;
-//					}
-//				}
-//			}
-//
-//			if (content.equals("N") && message.getMember().isOwner() && Settings.getInitialized()) {
-//				Settings.setInitialized(false);
-//				return;
 			}
-		}
-		catch (Exception e) {
+				if (rawMessage.equals("Y") && member.isOwner() && Settings.getInitialized()) {
+					if (!DBUtils.getWhitelistID(channel.getId())) {
+						int isInDB = DBUtils.setWhitelist(channel.getId(), guild.getId());
+						if (isInDB == -1) {
+							throw new IllegalArgumentException("Was not found");
+						} else if (isInDB == 0) {
+							sendMessage("Added channel " + channel.getName() + "to the list of approved channels");
+							System.out.println(0);
+							return;
+						} else {
+							sendMessage("Channel has been adjusted.");
+							System.out.println(1);
+							return;
+						}
+					}
+				}
+
+				if (rawMessage.equals("N") && member.isOwner() && Settings.getInitialized()) {
+					Settings.setInitialized(false);
+					sendMessage("Exiting from the settings menu.");
+					return;
+				}
+		} catch (Exception e) {
 			Notify.NotifyAdmin(e.toString(), Bot.getAdmin());
 		}
-	}
 
 
 //	@Override
@@ -160,5 +158,6 @@ public class PassiveListeners extends MessageHandler {
 //		Member m = event.getMember();
 //		String id = m.getUser().getId();
 //
-//	}
+	}
+
 }

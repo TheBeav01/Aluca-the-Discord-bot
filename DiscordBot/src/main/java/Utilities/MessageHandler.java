@@ -1,9 +1,13 @@
 package Utilities;
 
+import modules.Main;
 import modules.PassiveListeners;
+import modules.Settings;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+
+import java.util.logging.Level;
 
 /**
  * This getter class pulls useful information gathered from {@link net.dv8tion.jda.core.hooks.ListenerAdapter the listener}.
@@ -27,20 +31,26 @@ public class MessageHandler extends ListenerAdapter {
      */
     @Override
     public void onMessageReceived(MessageReceivedEvent messageEvent) {
-        test = "lmao";
         recievedMessage = messageEvent;
         message = messageEvent.getMessage();
         messageText = recievedMessage.getMessage().getStrippedContent();
+
         user = messageEvent.getAuthor();
         guildMember = messageEvent.getMember();
         guild = messageEvent.getGuild();
         channel = messageEvent.getChannel();
+        System.out.println(isMentioned());
         if(message.getAuthor().isBot()) {
             return;
         }
-        if(StringUtils.isValidCommand(messageText)) {
-            commandHandler(StringUtils.getCommand(messageText));
-
+        if(StringUtils.isValidCommand(messageText) || Settings.getInitialized() || isMentioned()) {
+            if(isMentioned()) {
+                Main.logger.log("Recieved mention", Level.INFO,"MessageEvent");
+                commandHandler("Mention");
+            }
+            else {
+                commandHandler(StringUtils.getCommand(messageText));
+            }
 
         }
     }
@@ -69,10 +79,19 @@ public class MessageHandler extends ListenerAdapter {
             System.out.println("Branched to settings");
 
         }
+        else if(command.startsWith("Mention")) {
+            sendMessage(":ping_pong:");
+        }
         else {
             System.out.println("Branched to main listener");
             PassiveListeners p = new PassiveListeners(command);
-            p.executeCommands(command, user, guildMember, guild, channel);
+            p.executeCommands(command, messageText, user, guildMember, guild, channel);
         }
+    }
+
+    public boolean isMentioned() {
+        System.out.println(message.getContent());
+        System.out.println(guild.getMember(Main.getJDA().getUserById(Bot.getBotID())).getEffectiveName());
+        return messageText.contains(guild.getMember(Main.getJDA().getUserById(Bot.getBotID())).getEffectiveName());
     }
 }

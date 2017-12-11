@@ -1,7 +1,5 @@
 package settings;
 
-import java.awt.Color;
-
 import Utilities.Bot;
 import Utilities.Notify;
 import Utilities.OwnerInfo;
@@ -12,6 +10,9 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.managers.GuildController;
 import net.dv8tion.jda.core.managers.RoleManager;
+
+import java.awt.*;
+import java.util.logging.Level;
 
 public class RoleColor extends ListenerAdapter implements Execute {
 
@@ -27,6 +28,7 @@ public class RoleColor extends ListenerAdapter implements Execute {
 
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
+		String text = event.getMessage().getRawContent();
 		if (event.getAuthor().isBot()) {
 			if (event.getMessage().getRawContent().equals(MESSAGE)) {
 				isActive = true;
@@ -35,14 +37,32 @@ public class RoleColor extends ListenerAdapter implements Execute {
 			return;
 		}
 		if (!event.getAuthor().isBot() && isActive && event.getAuthor().getId().matches(Bot.getOwnerID())) {
-			if (event.getMessage().getRawContent().length() == 7
-					&& event.getMessage().getRawContent().startsWith("#")) {
+			if (text.length() == 7 && text.startsWith("#")) {
 				color = event.getMessage().getRawContent();
 				AssignColor(Bot.getMember(), color);
 				event.getChannel().sendMessage("Color set to: " + color).queue();
 				isActive = false;
 			} else {
-				event.getChannel().sendMessage("Wrong format! Got " + event.getMessage().getRawContent()).queue();
+				String failed = "Wrong format! Got " + event.getMessage().getRawContent();
+				if(text.startsWith("exit") || text.startsWith("quit")) {
+					failed = "Exiting...";
+					Main.logger.log("Exiting from RC", Level.INFO, "Settings");
+					isActive = false;
+				}
+				else if(text.length() != 7) {
+					failed += " (Expected 7 characters, got " + text.length() + ")";
+					Main.logger.log("RoleColor fail (<7 chars)", Level.WARNING,"Settings");
+				}
+				else if(!text.startsWith("#")) {
+					failed += "(Expected to start with `#`)";
+					Main.logger.log("RoleColor fail (#)",Level.WARNING,"Settings");
+				}
+
+				else {
+					failed = "Unexpected error ocurred";
+					Main.logger.log(getClass().getName() + "error",Level.WARNING,"Settings");
+				}
+				event.getChannel().sendMessage(failed).queue();
 			}
 		}
 	}
