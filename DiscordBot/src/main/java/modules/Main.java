@@ -57,7 +57,6 @@ public class Main {
 		logger = new Logging();
 		String filePath = "Resources/application.json";
 		conf = ConfigFactory.parseFile(new File(filePath));
-		System.out.println(conf.entrySet());
 		b = new Bot();
 		DBUtils.Connect();
 		try {

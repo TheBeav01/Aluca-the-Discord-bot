@@ -7,7 +7,6 @@ public class StringUtils {
      * @return the number
      */
     public static int SplitNumber(String s) {
-        if(isValidCommand(s)) {
            String command = getCommand(s);
            String[] newS = command.split("[!A-Za-z ]+");
            try{
@@ -17,13 +16,12 @@ public class StringUtils {
                Notify.NotifyAdmin(e.toString(), Bot.getAdmin());
                return -1;
            }
-        }
-        return -1;
     }
 
     protected static boolean isValidCommand(String s) {
         for(CommandNames c : CommandNames.values()) {
-            if(s.contains(c.toString().toLowerCase())) {
+            if(s.contains(Bot.getPREFIX() + c.toString().toLowerCase())) {
+                System.out.println("Command found");
                 return true;
             }
         }

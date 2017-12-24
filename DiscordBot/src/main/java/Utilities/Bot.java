@@ -13,7 +13,7 @@ public class Bot {
 	private static final String DISCRIMINATOR = "0544";
 	private static final String ID = "367892259028598784";
 	private static final String OWNER_ID = "192705186324676608";
-
+	private static String PREFIX = "!";
 	private Game game;
 	private JDA jda;
 	private static Member member;
@@ -25,7 +25,8 @@ public class Bot {
 		this.jda = null;
 		Bot.member = null;
 	}
-	
+
+
 	public String getDiscriminator() {
 		return DISCRIMINATOR;
 	}
@@ -40,13 +41,14 @@ public class Bot {
 	public String getRoleColor() {
 		return roleColor;
 	}
-	
+	public static String getPREFIX() {
+		return PREFIX;
+	}
 	public static void setMember(Member m) {
 		Bot.member = m;
 		System.out.println(m.getNickname());
 //		Bot.user = m.getUser();
 	}
-	
 	public void setGame(String s) {
 		this.game = Game.of(s);
 		jda.getPresence().setGame(this.game);

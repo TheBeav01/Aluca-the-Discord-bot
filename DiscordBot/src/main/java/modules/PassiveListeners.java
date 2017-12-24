@@ -26,7 +26,6 @@ public class PassiveListeners extends MessageHandler {
 		setFields(strippedMessage, user, member, guild, channel);
 
 		try {
-			System.out.println(rawMessage);
 			if (strippedMessage.contains("ping")) {
 				long ping = channel.getJDA().getPing();
 				sendMessage(":ping_pong: \n Time taken: " + ping + "ms");
@@ -60,11 +59,9 @@ public class PassiveListeners extends MessageHandler {
 							throw new IllegalArgumentException("Was not found");
 						} else if (isInDB == 0) {
 							sendMessage("Added channel " + channel.getName() + "to the list of approved channels");
-							System.out.println(0);
 							return;
 						} else {
 							sendMessage("Channel has been adjusted.");
-							System.out.println(1);
 							return;
 						}
 					}
