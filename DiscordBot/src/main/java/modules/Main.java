@@ -19,6 +19,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.logging.Level;
 
+/**
+ * Main program that runs when the bot does. This hands off control to the listeners and handlers that actually do the
+ * responses.
+ */
 public class Main {
 	public static Config conf;
 	static JDA api;
@@ -36,23 +40,45 @@ public class Main {
 		}
 		b.setJDA(api);
 		mh = new MessageHandler();
-		api.addEventListener(mh, new Settings(), new RoleColor(), new Names());
+		api.addEventListener(mh, new Settings(), new RoleColor(), new Names()); //
 		api.getPresence().setGame(b.getGame());
 	}
-	
+
+	/**
+	 * Gets the currently running JDA
+	 * @return the running JDA API.
+	 */
 	public static JDA getJDA() {
 		return api;
 	}
-	
+
+	/**
+	 *
+	 * @return This bot entity
+	 */
 	public static Bot getBot() {
 		return b;
 	}
+
+	/**
+	 * A getter for the passive listener
+	 * @return The passive listener
+	 */
 	public static PassiveListeners getVAPLR() {
 		return VAPLR;
 	}
+
+	/**
+	 *
+	 * @return A message handler the bot uses.
+	 */
 	public static MessageHandler getMessageHandler() {
 		return mh;
 	}
+
+	/**
+	 * This cleans up main so the size wouldn't be too massive. This initializes the logging, and the config file.
+	 */
 	private static void initMain() {
 		logger = new Logging();
 		String filePath = "Resources/application.json";

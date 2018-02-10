@@ -18,6 +18,11 @@ public class StringUtils {
            }
     }
 
+    /**
+     *
+     * @param s THe string with the command to be parsed.
+     * @return True if a valid command in the enum is found. False otherwise.
+     */
     protected static boolean isValidCommand(String s) {
         for(CommandNames c : CommandNames.values()) {
             if(s.contains(Bot.getPREFIX() + c.toString().toLowerCase())) {
@@ -28,6 +33,11 @@ public class StringUtils {
         return false;
     }
 
+    /**
+     * Chops off the prefix from the command string, leaving the command name and all its values.
+     * @param s Command string of length x
+     * @return  Command string of length x-1
+     */
     public static String getCommand(String s) {
         String newS = s.substring(1);
         return newS;

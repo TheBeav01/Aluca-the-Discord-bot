@@ -26,7 +26,8 @@ public class MessageHandler extends ListenerAdapter {
     private String test;
 
     /**
-     * In this class, it's the setter for each variable. Furthermore, this
+     * In this class, it's the setter for each variable. This checks if the author is a bot, and if not it checks if
+     * there's a valid command within the message itself using isValidCommand.
      * @param messageEvent
      */
     @Override
@@ -45,7 +46,7 @@ public class MessageHandler extends ListenerAdapter {
         }
         if(StringUtils.isValidCommand(messageText) || Settings.getInitialized() || isMentioned()) {
             if(isMentioned()) {
-                Main.logger.log("Recieved mention", Level.INFO,"MessageEvent");
+                Main.logger.log("Received mention", Level.INFO,"MessageEvent");
                 commandHandler("Mention");
             }
             else {
@@ -58,14 +59,21 @@ public class MessageHandler extends ListenerAdapter {
 
 
     /**
-     *Sends a message to the channel the command was initiated in.
+     *Sends a message to the channel the calling command was initiated in.
      * @param messageText
      */
     public void sendMessage(String messageText) {
         channel.sendMessage(messageText).queue();
     }
 
-
+    /**
+     * Passback from PassiveListeners.java. This does what one expects it to: Set all sorts of things to be used in PassiveListeners.
+     * @param message
+     * @param user
+     * @param member
+     * @param guild
+     * @param channel
+     */
     public void setFields(String message, User user, Member member, Guild guild, MessageChannel channel) {
         this.messageText = message;
         this.user = user;
@@ -74,10 +82,17 @@ public class MessageHandler extends ListenerAdapter {
         this.channel = channel;
     }
 
+    /**
+     * The only method that should call this is onMessageRecieved(0 as that contains the logic for what is a command and
+     * what isn't. Will handle the branching between different modules.
+     * @param command The prefix stripped command.
+     */
     private void commandHandler(String command) {
-        if(command.startsWith(PREFIX+"s")) {
+        if(command.startsWith("s")) {
             System.out.println("Branched to settings");
-
+        }
+        else if(command.startsWith("help")) {
+            System.out.println("Branched to Help");
         }
         else if(command.startsWith("Mention")) {
             sendMessage(":ping_pong:");
@@ -89,6 +104,10 @@ public class MessageHandler extends ListenerAdapter {
         }
     }
 
+    /**
+     * Simple method that determines if the previous message mentioned the bot.
+     * @return True if the bot has been mentioned. False otherwise.
+     */
     public boolean isMentioned() {
         System.out.println(message.getContent());
         System.out.println(guild.getMember(Main.getJDA().getUserById(Bot.getBotID())).getEffectiveName());

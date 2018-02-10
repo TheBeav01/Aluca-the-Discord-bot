@@ -22,6 +22,15 @@ public class PassiveListeners extends MessageHandler {
 		System.out.println("Secondary constructor");
 	}
 
+	/**
+	 * The main part of the bot that handles the response to most commands.
+	 * @param strippedMessage The command stripped message.
+	 * @param rawMessage The message with the command.
+	 * @param user The User object that posted the message.
+	 * @param member The Member object that posted the message.
+	 * @param guild The guild the message originated in.
+	 * @param channel The guild channel the message originated in.
+	 */
 	public void executeCommands(String strippedMessage, String rawMessage, User user, Member member, Guild guild, MessageChannel channel) {
 		setFields(strippedMessage, user, member, guild, channel);
 
@@ -30,7 +39,7 @@ public class PassiveListeners extends MessageHandler {
 				long ping = channel.getJDA().getPing();
 				sendMessage(":ping_pong: \n Time taken: " + ping + "ms");
 			}
-			if (strippedMessage.contains("kill") && member.isOwner()) {
+			if (strippedMessage.contains("kill") && (member.isOwner() || botOwnerHasPosted(user.getIdLong()))) {
 				sendMessage("Shutting down.");
 				Main.logger.log("END OF LOG FILE \n ------------------------------------------------", Level.INFO, "Shutdown");
 				Main.logger.close();
@@ -75,6 +84,10 @@ public class PassiveListeners extends MessageHandler {
 		} catch (Exception e) {
 			Notify.NotifyAdmin(e.toString(), Bot.getAdmin());
 		}
+	}
+	private boolean botOwnerHasPosted(long COMP) {
+		return (Bot.getAdmin().getIdLong() == COMP);
+	}
 
 
 //	@Override
@@ -156,5 +169,3 @@ public class PassiveListeners extends MessageHandler {
 //		String id = m.getUser().getId();
 //
 	}
-
-}

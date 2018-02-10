@@ -5,6 +5,10 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
+
+/**
+ * This class models the robot as a Bot object. This object has all the information the bot has, and information on its owner.
+ */
 public class Bot {
 
 	public static String nickName;
@@ -18,6 +22,7 @@ public class Bot {
 	private JDA jda;
 	private static Member member;
 	private static User user;
+
 	public Bot() {
 		nickName = "Aluca, the Roboderg";
 		displayName = "Aluca, the Roboderg";
@@ -49,6 +54,11 @@ public class Bot {
 		System.out.println(m.getNickname());
 //		Bot.user = m.getUser();
 	}
+
+	/**
+	 * Changes the "now playing" to a different game.
+	 * @param s
+	 */
 	public void setGame(String s) {
 		this.game = Game.of(s);
 		jda.getPresence().setGame(this.game);

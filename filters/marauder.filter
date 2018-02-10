@@ -114,7 +114,7 @@ Show
 	Rarity > Normal
     ItemLevel > 30
     SetBorderColor 255 0 0
-    PlayAlertSound 5 150
+    PlayAlertSound 5
 
 Show
 	Class "Body Armours"
