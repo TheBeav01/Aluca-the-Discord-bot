@@ -89,27 +89,13 @@ Show
     SocketGroup RGB
     SetTextColor 245 17 165
     SetBackgroundColor 50 50 0
-	
-Show
-    LinkedSockets = 5
-    SetTextColor 148 77 141
-    SetFontSize 31
 Show
     LinkedSockets = 6
     SetTextColor 148 77 141
-	SetBorderColor 255 200 0
     SetFontSize 39
-	PlayAlertSound 2 100
 Show
-    Sockets = 5
+    Sockets >= 5
     SetTextColor 242 12 212
-	
-Show
-    Sockets = 6
-    SetTextColor 242 12 212
-	SetBorderColor 0 255 0
-	SetFontSize 35
-	PlayAlertSound 1 100
 
 # A blue border for regal recipe items
 Show
@@ -129,13 +115,6 @@ Show
     ItemLevel > 30
     SetBorderColor 255 0 0
     PlayAlertSound 5
-	
-Show
-    Class "Body Armours" "Shield" "Helmets" "Gloves" "Boots" "Mace"
-	BaseType "Plate" "Chestplate" "Tower" "Hat" "Helmet" "Burgonet" "Gauntlets" "Spiked Gloves" "Greaves" "Maul" "Mace"
-	Quality > 0
-	SetFontSize 30
-	SetBorderColor 255 0 255
 
 Show
 	Class "Body Armours"

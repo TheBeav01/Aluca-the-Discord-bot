@@ -82,7 +82,7 @@ public class PassiveListeners extends MessageHandler {
 					return;
 				}
 		} catch (Exception e) {
-			Notify.NotifyAdmin(e.toString());
+			Notify.NotifyAdmin(e.toString(), Bot.getAdmin());
 		}
 	}
 	private boolean botOwnerHasPosted(long COMP) {

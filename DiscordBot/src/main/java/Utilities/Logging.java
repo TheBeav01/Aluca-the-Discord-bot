@@ -19,7 +19,7 @@ public class Logging {
             pw = new PrintWriter(new FileWriter(pathname, true));
         }
         catch (IOException e) {
-            Notify.NotifyAdmin(e.toString());
+            Notify.NotifyAdmin(e.toString(),Bot.getAdmin());
             return false;
         }
         return true;

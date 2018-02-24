@@ -18,11 +18,10 @@ public class DBUtils {
             Class.forName(driver).newInstance();
             DBCon = DriverManager.getConnection(URL, DBConstants.DB_USER, DBConstants.DB_PASS);
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
-            Notify.NotifyAdmin("getWhitelistID caught an exception: " + e.getMessage());
+            Notify.NotifyAdmin("getWhitelistID caught an exception: " + e.getMessage(), Bot.getAdmin());
             e.printStackTrace();
             return false;
         }
-        Notify.NotifyAdmin("Connected to database!");
         return true;
     }
 
@@ -42,7 +41,7 @@ public class DBUtils {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            Notify.NotifyAdmin("getWhitelistID caught an exception: " + e.getMessage() + " " + e.getErrorCode());
+            Notify.NotifyAdmin("getWhitelistID caught an exception: " + e.getMessage() + " " + e.getErrorCode(), Bot.getAdmin());
             return false;
         }
         return true;
@@ -80,7 +79,7 @@ public class DBUtils {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            Notify.NotifyAdmin("setWhitelist caught an exception: " + e.getMessage() + " " + e.getErrorCode());
+            Notify.NotifyAdmin("setWhitelist caught an exception: " + e.getMessage() + " " + e.getErrorCode(), Bot.getAdmin());
             return -1;
         }
     }
@@ -127,7 +126,7 @@ public class DBUtils {
                 }
             }
         } catch (SQLException e) {
-            Notify.NotifyAdmin("An error occurred!" + e.toString());
+            Notify.NotifyAdmin("An error occurred!" + e.toString(), Bot.getAdmin());
         }
         return false;
     }

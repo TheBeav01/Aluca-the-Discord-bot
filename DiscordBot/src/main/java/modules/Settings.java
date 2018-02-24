@@ -25,7 +25,7 @@ public class Settings extends ListenerAdapter {
 				sb.append(System.lineSeparator());
 			}
 		} catch (FileNotFoundException e) {
-			Notify.NotifyAdmin(e.getMessage() + f.getAbsolutePath());
+			Notify.NotifyAdmin(e.getMessage() + f.getAbsolutePath(), Main.getJDA().getUserById(OwnerInfo.sId));
 			sb.append("Whoops. Something went wrong! Contact " + Main.getJDA().getUserById(OwnerInfo.sId).getAsMention());
 			
 		}
