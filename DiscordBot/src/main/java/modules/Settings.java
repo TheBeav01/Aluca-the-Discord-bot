@@ -1,5 +1,6 @@
 package modules;
 import Utilities.Bot;
+import Utilities.MessageHandler;
 import Utilities.Notify;
 import Utilities.OwnerInfo;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -14,6 +15,7 @@ public class Settings extends ListenerAdapter {
 	private static boolean init = false;	
 	MessageReceivedEvent lastSuccessful;
 	static String id;
+	private MessageHandler mh = Main.getMessageHandler();
 	private String settingsInit(MessageReceivedEvent event) {
 		StringBuilder sb = new StringBuilder();
 		Scanner sc = null;
@@ -43,7 +45,7 @@ public class Settings extends ListenerAdapter {
 				return;
 			}
 			String content = event.getMessage().getRawContent();
-			if(content.equals("!s")) {
+			if(content.equals("!s") && mh.BotOwnerHasMessaged()) {
 				lastSuccessful = event;
 				event.getChannel().sendMessage(settingsInit(event)).queue();
 			}

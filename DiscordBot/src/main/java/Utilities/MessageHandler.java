@@ -113,4 +113,15 @@ public class MessageHandler extends ListenerAdapter {
         System.out.println(guild.getMember(Main.getJDA().getUserById(Bot.getBotID())).getEffectiveName());
         return messageText.contains(guild.getMember(Main.getJDA().getUserById(Bot.getBotID())).getEffectiveName());
     }
+    public boolean BotOwnerHasMessaged() {
+        System.out.println("Foo: " + user.getId().equals(Bot.getAdmin().getId()));
+        return user.getId().equals(Bot.getAdmin().getId());
+    }
+
+    public void SendMessage(String s) {
+        channel.sendMessage(s).queue();
+    }
+    public void sendEmbed(MessageEmbed me) {
+        channel.sendMessage(me).queue();
+    }
 }
