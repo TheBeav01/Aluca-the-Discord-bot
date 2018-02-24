@@ -30,7 +30,7 @@ public class SettingsRedux extends MessageHandler {
                 sb.append(System.lineSeparator());
             }
         } catch (FileNotFoundException e) {
-            Notify.NotifyAdmin(e.getMessage() + f.getAbsolutePath(), Main.getJDA().getUserById(OwnerInfo.sId));
+            Notify.NotifyAdmin(e.getMessage() + f.getAbsolutePath());
             sb.append("Whoops. Something went wrong! Contact " + Main.getJDA().getUserById(OwnerInfo.sId).getAsMention());
 
         }
