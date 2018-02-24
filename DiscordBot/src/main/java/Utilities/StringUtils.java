@@ -13,7 +13,7 @@ public class StringUtils {
                return Integer.parseInt(newS[1]);
            }
            catch(NumberFormatException | IndexOutOfBoundsException e) {
-               Notify.NotifyAdmin(e.toString(), Bot.getAdmin());
+               Notify.NotifyAdmin(e.toString());
                return -1;
            }
     }
