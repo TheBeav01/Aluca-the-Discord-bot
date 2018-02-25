@@ -9,7 +9,6 @@ import settings.Names;
 import settings.RoleColor;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.logging.Level;
 
@@ -41,11 +40,12 @@ public class SettingsRedux extends MessageHandler {
                 iter++;
             }
             sc.close();
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             Notify.NotifyAdmin(e.getMessage() + f.getAbsolutePath());
             sb.append("Whoops. Something went wrong! Contact " + Main.getJDA().getUserById(OwnerInfo.sId).getAsMention());
 
         }
+        Main.logger.log("Constructed settings embed");
         init = true;
         ebh.send();
     }
@@ -72,7 +72,6 @@ public class SettingsRedux extends MessageHandler {
         }
     }
     public void execute(int code) {
-        holder = super.getEvent();
         switch(code) {
             case 0:
                 Names.Init(mh.getEvent(), ebh);
