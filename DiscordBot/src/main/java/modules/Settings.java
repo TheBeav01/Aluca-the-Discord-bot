@@ -1,8 +1,6 @@
 package modules;
-import Utilities.Bot;
-import Utilities.MessageHandler;
-import Utilities.Notify;
-import Utilities.OwnerInfo;
+import Utilities.*;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import settings.Names;
@@ -16,12 +14,14 @@ public class Settings extends ListenerAdapter {
 	MessageReceivedEvent lastSuccessful;
 	static String id;
 	private MessageHandler mh = Main.getMessageHandler();
+	private EmbedBuilderHelper ebh;
+
 	private String settingsInit(MessageReceivedEvent event) {
+		ebh = new EmbedBuilderHelper(new EmbedBuilder(), "Settings Menu", "Settings", Bot.DEFAULT_IM_URL);
 		StringBuilder sb = new StringBuilder();
-		Scanner sc = null;
 		File f = new File(Main.conf.getString("settings-Path"));
 		try {
-			sc = new Scanner(f);
+			Scanner sc = new Scanner(f);
 			while(sc.hasNext()) {
 				sb.append(sc.nextLine());
 				sb.append(System.lineSeparator());
@@ -47,7 +47,7 @@ public class Settings extends ListenerAdapter {
 			String content = event.getMessage().getRawContent();
 			if(content.equals("!s") && mh.BotOwnerHasMessaged()) {
 				lastSuccessful = event;
-				event.getChannel().sendMessage(settingsInit(event)).queue();
+//				event.getChannel().sendMessage(settingsInit(event)).queue();
 			}
 			
 			else if(content.equals("1") && init) {

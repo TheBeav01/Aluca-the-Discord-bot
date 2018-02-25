@@ -1,6 +1,7 @@
 package modules;
 
 import Utilities.*;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
@@ -12,10 +13,6 @@ import java.util.logging.Level;
 
 public class PassiveListeners extends MessageHandler {
 	private String message;
-	private User user;
-	private Member member;
-	private Guild guild;
-	private MessageChannel channel;
 	private MessageHandler mh;
 //	public PassiveListeners() {
 //		super();
@@ -40,6 +37,7 @@ public class PassiveListeners extends MessageHandler {
 	 */
 	public void executeCommands(String strippedMessage, String rawMessage, User user, Member member, Guild guild, MessageChannel channel) {
 		setFields(strippedMessage, user, member, guild, channel);
+
 		if (mh == null) {
 			Main.logger.log("MessageHandler has not been initialized!", Level.WARNING, "Gen Logging");
 		}
@@ -50,7 +48,8 @@ public class PassiveListeners extends MessageHandler {
 			}
 			if (strippedMessage.contains("kill") && (member.isOwner() || mh.BotOwnerHasMessaged())) {
 				mh.sendMessage("Shutting down.");
-				Main.logger.log("END OF LOG FILE \n ------------------------------------------------", Level.INFO, "Shutdown");
+				Main.logger.log("END OF LOG FILE \n ------------------------------------------------", Level.INFO,
+						"Shutdown");
 				Main.logger.close();
 				Main.getJDA().shutdown();
 				System.exit(0);
@@ -78,9 +77,11 @@ public class PassiveListeners extends MessageHandler {
 						throw new IllegalArgumentException("Was not found");
 					} else if (isInDB == 0) {
 						mh.sendMessage("Added channel " + channel.getName() + "to the list of approved channels");
+						Main.logger.log("Added channel ID: " + channel.getId() + " to database",Level.INFO,"DB");
 						return;
 					} else {
 						mh.sendMessage("Channel has been adjusted.");
+						Main.logger.log("Changed channels from old to " + channel.getId(),Level.INFO,"DB");
 						return;
 					}
 				}
@@ -93,16 +94,17 @@ public class PassiveListeners extends MessageHandler {
 				return;
 			}
 			if (strippedMessage.equalsIgnoreCase("ehw")) {
-				EmbedBuilderHelper ebh = new EmbedBuilderHelper();
+				EmbedBuilderHelper ebh = new EmbedBuilderHelper(new EmbedBuilder(), null, null, null);
 				Main.logger.log("Embedded Hello World", Level.INFO, "General Logging");
 				ebh.helloWorld();
 			}
 			if(strippedMessage.equalsIgnoreCase("boop")) {
-				if(user.getId() == "145399954574147584") { //Rax <3
+				Main.logger.log("Sent boop to " + channel.getId(),Level.INFO,"General Logging");
+				if(user.getId().matches("145399954574147584")) { //Rax <3
 					mh.sendMessage("*blinks at the sudden boop, then hugtackles and wrapping both wings around " +
 							" you, purring happily*");
 				}
-				if(mh.BotOwnerHasMessaged()) {
+				else if(mh.BotOwnerHasMessaged()) {
 					mh.sendMessage("*purrs and nuzzles finger happily*");
 				}
 				else {
@@ -126,8 +128,64 @@ public class PassiveListeners extends MessageHandler {
 
 		try {
 			mh.sendMessage(member.getEffectiveName() + " has joined " + event.getChannelJoined().getName());
+			Main.logger.log("VC join detected in " + m.getId(),Level.INFO,"General Logging");
 		} catch (Exception e) {
 			Notify.NotifyAdmin(e.getMessage());
+		}
+	}
+
+
+
+	@Override
+	public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
+		MessageChannel m = FindChannel(event.getGuild());
+		Member member = event.getMember();
+		if (m == null) {
+			Notify.NotifyAdmin("Channel was not defined for the server." + event.getGuild().toString()
+					+ "Define it in the settings");
+			return;
+		}
+
+		try {
+			mh.sendMessage(member.getEffectiveName() + " has left " + event.getChannelLeft().getName());
+			Main.logger.log("VC leave detected " + m.getId(),Level.INFO,"General Logging");
+		} catch (Exception e) {
+			Notify.NotifyAdmin(e.getMessage());
+		}
+	}
+
+	@Override
+	public void onGuildMemberJoin(GuildMemberJoinEvent event) {
+		Member m = event.getMember();
+		String id = m.getUser().getId();
+		try {
+			boolean joined = DBUtils.setGuildUser(event.getGuild().getName(), event.getGuild().getId(), id, true);
+			if (joined) {
+				mh.sendMessage("User: " + m.getEffectiveName() + "Has joined " + event.getGuild().getName() +
+						"\n User has joined: " + DBUtils.joined + "times");
+				Main.logger.log("Join detected in " + event.getGuild().getId(),Level.INFO,"General Logging");
+			}
+		}
+		catch (Exception e) {
+			Notify.NotifyAdmin(e.toString());
+		}
+	}
+
+	@Override
+	public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
+		Member m = event.getMember();
+		String id = m.getUser().getId();
+		try {
+			boolean left = DBUtils.setGuildUser(event.getGuild().getName(), event.getGuild().getId(), id, false);
+			if (left) {
+				mh.sendMessage("User: " + m.getEffectiveName() + "Has left " + event.getGuild().getName() +
+						"\n User has left: " + DBUtils.joined + "times");
+				Main.logger.log("Leave detected in " + event.getGuild().getId(),Level.INFO,"General Logging");
+
+			}
+		}
+		catch (Exception e) {
+			Notify.NotifyAdmin(e.toString());
 		}
 	}
 
@@ -145,56 +203,5 @@ public class PassiveListeners extends MessageHandler {
 			}
 		}
 		return null;
-	}
-
-	@Override
-	public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
-		MessageChannel m = FindChannel(event.getGuild());
-		Member member = event.getMember();
-		if (m == null) {
-			Notify.NotifyAdmin("Channel was not defined for the server." + event.getGuild().toString()
-					+ "Define it in the settings");
-			return;
-		}
-
-		try {
-			mh.sendMessage(member.getEffectiveName() + " has left " + event.getChannelLeft().getName());
-		} catch (Exception e) {
-			Notify.NotifyAdmin(e.getMessage());
-		}
-	}
-
-	@Override
-	public void onGuildMemberJoin(GuildMemberJoinEvent event) {
-		Member m = event.getMember();
-		String id = m.getUser().getId();
-		try {
-			boolean joined = DBUtils.setGuildUser(event.getGuild().getName(), event.getGuild().getId(), id, true);
-			if (joined) {
-				mh.sendMessage("User: " + m.getEffectiveName() + "Has joined " + event.getGuild().getName() +
-						"\n User has joined: " + DBUtils.joined + "times");
-
-			}
-		}
-		catch (Exception e) {
-			Notify.NotifyAdmin(e.toString());
-		}
-	}
-
-	@Override
-	public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
-		Member m = event.getMember();
-		String id = m.getUser().getId();
-		try {
-			boolean left = DBUtils.setGuildUser(event.getGuild().getName(), event.getGuild().getId(), id, false);
-			if (left) {
-				mh.sendMessage("User: " + m.getEffectiveName() + "Has left " + event.getGuild().getName() +
-						"\n User has left: " + DBUtils.joined + "times");
-
-			}
-		}
-		catch (Exception e) {
-			Notify.NotifyAdmin(e.toString());
-		}
 	}
 }

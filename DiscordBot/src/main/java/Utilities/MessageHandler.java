@@ -3,6 +3,7 @@ package Utilities;
 import modules.Main;
 import modules.PassiveListeners;
 import modules.Settings;
+import modules.SettingsRedux;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
@@ -88,8 +89,9 @@ public class MessageHandler extends ListenerAdapter {
      * @param command The prefix stripped command.
      */
     private void commandHandler(String command) {
-        if(command.startsWith("s")) {
+        if(command.equalsIgnoreCase("s")) {
             System.out.println("Branched to settings");
+            SettingsRedux sr = new SettingsRedux(recievedMessage);
         }
         else if(command.startsWith("help")) {
             System.out.println("Branched to Help");
@@ -123,5 +125,12 @@ public class MessageHandler extends ListenerAdapter {
     }
     public void sendEmbed(MessageEmbed me) {
         channel.sendMessage(me).queue();
+    }
+
+    public MessageReceivedEvent getEvent() {
+        return recievedMessage;
+    }
+    public String getMessageText() {
+        return messageText;
     }
 }

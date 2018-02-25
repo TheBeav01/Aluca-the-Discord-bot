@@ -22,6 +22,7 @@ public class Bot {
 	private JDA jda;
 	private static Member member;
 	private static User user;
+	public static String DEFAULT_IM_URL = "https://i.imgur.com/86Ih1fm.jpg";
 
 	public Bot() {
 		nickName = "Aluca, the Roboderg";

@@ -1,7 +1,3 @@
-```Current options:
-[1] Set Nickname
-[2] Set Role Color
-[3] Add Join/Leave messages to this channel.
-
-Select a number to get started, or type "exit"
-```
+Set Nickname, sets the nickname of the bot
+Set Role Color, sets the role color of the bot
+Configure Join/Leave, sets Join/Leave messages to the current channel
