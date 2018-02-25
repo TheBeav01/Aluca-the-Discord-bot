@@ -1,3 +1,3 @@
-Set Nickname, sets the nickname of the bot
-Set Role Color, sets the role color of the bot
-Configure Join/Leave, sets Join/Leave messages to the current channel
+Set Nickname, Sets the nickname of the bot
+Set Role Color, Sets the role color of the bot
+Configure Join/Leave, Sets Join/Leave messages to the current channel

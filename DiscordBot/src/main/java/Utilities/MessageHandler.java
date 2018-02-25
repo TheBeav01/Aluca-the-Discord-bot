@@ -2,7 +2,6 @@ package Utilities;
 
 import modules.Main;
 import modules.PassiveListeners;
-import modules.Settings;
 import modules.SettingsRedux;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -25,7 +24,7 @@ public class MessageHandler extends ListenerAdapter {
     public char PREFIX = '!';
     public boolean executableCommand;
     private String test;
-
+    private SettingsRedux sr;
     /**
      * In this class, it's the setter for each variable. This checks if the author is a bot, and if not it checks if
      * there's a valid command within the message itself using isValidCommand.
@@ -45,7 +44,10 @@ public class MessageHandler extends ListenerAdapter {
         if(message.getAuthor().isBot()) {
             return;
         }
-        if(StringUtils.isValidCommand(messageText) || Settings.getInitialized() || isMentioned()) {
+        if(SettingsRedux.getInitialized()) {
+            sr.checkValidity(recievedMessage);
+        }
+        else if (StringUtils.isValidCommand(messageText) || SettingsRedux.getInitialized() || isMentioned()) {
             if(isMentioned()) {
                 Main.logger.log("Received mention", Level.INFO,"MessageEvent");
                 commandHandler("Mention");
@@ -53,7 +55,6 @@ public class MessageHandler extends ListenerAdapter {
             else {
                 commandHandler(StringUtils.getCommand(messageText));
             }
-
         }
     }
 
@@ -75,12 +76,13 @@ public class MessageHandler extends ListenerAdapter {
      * @param guild
      * @param channel
      */
-    public void setFields(String message, User user, Member member, Guild guild, MessageChannel channel) {
+    public void setFields(String message, User user, Member member, Guild guild, MessageChannel channel, SettingsRedux settingsRedux) {
         this.messageText = message;
         this.user = user;
         this.guildMember = member;
         this.guild = guild;
         this.channel = channel;
+        this.sr = settingsRedux;
     }
 
     /**
@@ -91,7 +93,7 @@ public class MessageHandler extends ListenerAdapter {
     private void commandHandler(String command) {
         if(command.equalsIgnoreCase("s")) {
             System.out.println("Branched to settings");
-            SettingsRedux sr = new SettingsRedux(recievedMessage);
+            sr = new SettingsRedux(recievedMessage);
         }
         else if(command.startsWith("help")) {
             System.out.println("Branched to Help");
@@ -102,7 +104,7 @@ public class MessageHandler extends ListenerAdapter {
         else {
             System.out.println("Branched to main listener");
             PassiveListeners p = new PassiveListeners(command);
-            p.executeCommands(command, messageText, user, guildMember, guild, channel);
+            p.executeCommands(command, messageText, user, guildMember, guild, channel, sr);
         }
     }
 

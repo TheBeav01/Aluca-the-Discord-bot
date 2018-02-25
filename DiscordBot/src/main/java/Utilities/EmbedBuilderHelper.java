@@ -31,4 +31,7 @@ public class EmbedBuilderHelper {
     public void send() {
         mh.sendEmbed(ebMain.build());
     }
+    public void ClearText() {
+        ebMain.clearFields();
+    }
 }

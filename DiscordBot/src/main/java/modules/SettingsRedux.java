@@ -2,6 +2,8 @@ package modules;
 
 import Utilities.*;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import settings.Names;
 import settings.RoleColor;
@@ -16,12 +18,11 @@ public class SettingsRedux extends MessageHandler {
     private MessageReceivedEvent holder, lastSuccessful;
     private static String id;
     private EmbedBuilderHelper ebh;
+    private MessageHandler mh;
     public SettingsRedux(MessageReceivedEvent event) {
         this.holder = event;
+        mh = Main.getMessageHandler();
         init();
-    }
-    public void executeCommands() {
-
     }
 
     private void init() {
@@ -36,7 +37,8 @@ public class SettingsRedux extends MessageHandler {
             while(sc.hasNext()) {
                 String temp = sc.nextLine();
                 String[] splitted = temp.split(",");
-                System.out.println(splitted[1]);
+                ebh.addText(Integer.toString(iter) + ". " + splitted[0].trim(), splitted[1].trim());
+                iter++;
             }
             sc.close();
         } catch (FileNotFoundException e) {
@@ -48,34 +50,75 @@ public class SettingsRedux extends MessageHandler {
         ebh.send();
     }
 
-    public void execute(int code) {
-        holder = super.getEvent();
-        if(!RoleColor.isActive()) {
-            if(holder.getAuthor().isBot()) {
-                Bot.setMember(holder.getMember());
-                return;
-            }
-            String content = super.getMessageText();
-            if(content.equals("!s")) {
-                lastSuccessful = holder;
-            }
-
-            else if(content.equals("1") && init) {
-                Names.Init(lastSuccessful);
-            }
-
-            else if(content.equals("2") && init) {
-                lastSuccessful.getChannel().sendMessage("`Enter desired role color`").queue();
-                RoleColor.Init(lastSuccessful);
-            }
-            else if(content.equals("3") && init) {
-                lastSuccessful.getChannel().sendMessage("`Enable VC join/leave in this channel? Y/N`").queue();
-            }
-            else if(content.equals("exit") && init) {
+    public void checkValidity(MessageReceivedEvent toCheck) {
+        System.out.println("HAAAAAAA");
+        User Author = toCheck.getAuthor();
+        MessageChannel ch = toCheck.getChannel();
+        String stripped = toCheck.getMessage().getStrippedContent();
+        if(stripped.equalsIgnoreCase("exit")) {
+            init = false;
+            execute(-1);
+            return;
+        }
+        if(stripped.length() > 1) {
+            return;
+        }
+        if((Author.getIdLong() == holder.getAuthor().getIdLong()) &&
+                (ch.getIdLong() == holder.getChannel().getIdLong())) {
+            if(stripped.matches("[0-9]+") && Integer.parseInt(stripped) <= Bot.MAX_SETTING_RANGE) {
                 init = false;
-                lastSuccessful.getChannel().sendMessage("Exiting").queue();
+                execute(Integer.parseInt(stripped));
             }
         }
+    }
+    public void execute(int code) {
+        holder = super.getEvent();
+        switch(code) {
+            case 0:
+                Names.Init(mh.getEvent(), ebh);
+                break;
+            case 1:
+                RoleColor.Init(mh.getEvent(), ebh);
+                break;
+            case 2:
+                ebh.ClearText();
+                ebh.addText("Enable voice join/leave?", "Y/N");
+                ebh.send();
+                break;
+            case -1:
+                ebh.ClearText();
+                ebh.addText("Leaving Settings", "");
+                break;
+            default:
+                Notify.NotifyAdmin("SettingsRedux => Execute error");
+                break;
+        }
+//        if(!RoleColor.isActive()) {
+//            if(holder.getAuthor().isBot()) {
+//                Bot.setMember(holder.getMember());
+//                return;
+//            }
+//            String content = super.getMessageText();
+//            if(content.equals("!s")) {
+//                lastSuccessful = holder;
+//            }
+//
+//            else if(content.equals("1") && init) {
+//                Names.Init(lastSuccessful);
+//            }
+//
+//            else if(content.equals("2") && init) {
+//                lastSuccessful.getChannel().sendMessage("`Enter desired role color`").queue();
+//                RoleColor.Init(lastSuccessful);
+//            }
+//            else if(content.equals("3") && init) {
+//                lastSuccessful.getChannel().sendMessage("`Enable VC join/leave in this channel? Y/N`").queue();
+//            }
+//            else if(content.equals("exit") && init) {
+//                init = false;
+//                lastSuccessful.getChannel().sendMessage("Exiting").queue();
+//            }
+//        }
     }
 
 //    @Override

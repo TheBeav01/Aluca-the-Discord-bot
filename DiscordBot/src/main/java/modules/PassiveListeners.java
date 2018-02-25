@@ -27,16 +27,16 @@ public class PassiveListeners extends MessageHandler {
 
 	/**
 	 * The main part of the bot that handles the response to most commands.
-	 *
-	 * @param strippedMessage The command stripped message.
+	 *  @param strippedMessage The command stripped message.
 	 * @param rawMessage      The message with the command.
 	 * @param user            The User object that posted the message.
 	 * @param member          The Member object that posted the message.
 	 * @param guild           The guild the message originated in.
 	 * @param channel         The guild channel the message originated in.
+	 * @param settingsRedux
 	 */
-	public void executeCommands(String strippedMessage, String rawMessage, User user, Member member, Guild guild, MessageChannel channel) {
-		setFields(strippedMessage, user, member, guild, channel);
+	public void executeCommands(String strippedMessage, String rawMessage, User user, Member member, Guild guild, MessageChannel channel, SettingsRedux settingsRedux) {
+		setFields(strippedMessage, user, member, guild, channel, settingsRedux);
 
 		if (mh == null) {
 			Main.logger.log("MessageHandler has not been initialized!", Level.WARNING, "Gen Logging");
@@ -70,7 +70,7 @@ public class PassiveListeners extends MessageHandler {
 				}
 			}
 			if (rawMessage.equalsIgnoreCase("Y") && (member.isOwner() || mh.BotOwnerHasMessaged())
-					&& Settings.getInitialized()) {
+					&& SettingsRedux.getInitialized()) {
 				if (!DBUtils.getWhitelistID(channel.getId())) {
 					int isInDB = DBUtils.setWhitelist(channel.getId(), guild.getId());
 					if (isInDB == -1) {
@@ -88,8 +88,8 @@ public class PassiveListeners extends MessageHandler {
 			}
 
 			if (rawMessage.equalsIgnoreCase("N") && (member.isOwner() || mh.BotOwnerHasMessaged())
-					&& Settings.getInitialized()) {
-				Settings.setInitialized(false);
+					&& SettingsRedux.getInitialized()) {
+				SettingsRedux.setInitialized(false);
 				mh.sendMessage("Exiting from the settings menu.");
 				return;
 			}

@@ -18,6 +18,7 @@ public class Bot {
 	private static final String ID = "367892259028598784";
 	private static final String OWNER_ID = "192705186324676608";
 	private static String PREFIX = "!";
+	public static int MAX_SETTING_RANGE = 2;
 	private Game game;
 	private JDA jda;
 	private static Member member;

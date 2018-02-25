@@ -1,6 +1,7 @@
 package settings;
 
 import Utilities.Bot;
+import Utilities.EmbedBuilderHelper;
 import Utilities.Notify;
 import modules.Main;
 import net.dv8tion.jda.core.entities.Member;
@@ -114,7 +115,7 @@ public class RoleColor extends ListenerAdapter implements Execute {
 		return color;
 	}
 
-	public static void Init(MessageReceivedEvent event) {
+	public static void Init(MessageReceivedEvent event, EmbedBuilderHelper ebh) {
 		event.getChannel().sendMessage(MESSAGE).queue();
 		id = Bot.getBotID();
 	}

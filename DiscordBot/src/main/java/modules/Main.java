@@ -40,7 +40,7 @@ public class Main {
 		}
 		b.setJDA(api);
 		mh = new MessageHandler();
-		api.addEventListener(mh, new Settings(), new RoleColor(), new Names()); //
+		api.addEventListener(mh, new RoleColor(), new Names()); //
 		api.getPresence().setGame(b.getGame());
 	}
 

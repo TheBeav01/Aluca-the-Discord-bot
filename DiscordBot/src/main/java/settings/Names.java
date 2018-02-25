@@ -1,6 +1,7 @@
 package settings;
 
 import Utilities.Bot;
+import Utilities.EmbedBuilderHelper;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.managers.*;
@@ -42,8 +43,10 @@ public class Names extends ListenerAdapter implements Execute {
 		}
 	}
 
-	public static void Init(MessageReceivedEvent event) {
-		event.getTextChannel().sendMessage(MESSAGE).queue();
+	public static void Init(MessageReceivedEvent event, EmbedBuilderHelper ebh) {
+		ebh.addText(MESSAGE, "");
+		ebh.send();
+//		event.getTextChannel().sendMessage(MESSAGE).queue();
 	}
 
 	@Override
