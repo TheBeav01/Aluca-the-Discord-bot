@@ -127,7 +127,7 @@ public class PassiveListeners extends MessageHandler {
 		}
 
 		try {
-			mh.sendMessage(member.getEffectiveName() + " has joined " + event.getChannelJoined().getName());
+			m.sendMessage(member.getEffectiveName() + " has joined " + event.getChannelJoined().getName());
 			Main.logger.log("VC join detected in " + m.getId(),Level.INFO,"General Logging");
 		} catch (Exception e) {
 			Notify.NotifyAdmin(e.getMessage());
@@ -147,7 +147,7 @@ public class PassiveListeners extends MessageHandler {
 		}
 
 		try {
-			mh.sendMessage(member.getEffectiveName() + " has left " + event.getChannelLeft().getName());
+			m.sendMessage(member.getEffectiveName() + " has left " + event.getChannelLeft().getName());
 			Main.logger.log("VC leave detected " + m.getId(),Level.INFO,"General Logging");
 		} catch (Exception e) {
 			Notify.NotifyAdmin(e.getMessage());

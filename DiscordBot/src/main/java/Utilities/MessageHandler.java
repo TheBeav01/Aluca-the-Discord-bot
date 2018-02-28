@@ -63,6 +63,7 @@ public class MessageHandler extends ListenerAdapter {
     /**
      *Sends a message to the channel the calling command was initiated in.
      * @param messageText
+     *
      */
     public void sendMessage(String messageText) {
         channel.sendMessage(messageText).queue();
