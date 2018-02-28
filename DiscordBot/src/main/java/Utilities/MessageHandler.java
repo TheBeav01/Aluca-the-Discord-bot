@@ -41,13 +41,13 @@ public class MessageHandler extends ListenerAdapter {
         guild = messageEvent.getGuild();
         channel = messageEvent.getChannel();
         System.out.println(isMentioned());
-        if(message.getAuthor().isBot()) {
+        if(message.getAuthor().isBot() && !message.getAuthor().getId().matches("370045256902639647")) { //Church <3
             return;
         }
         if(SettingsRedux.getInitialized()) {
             sr.checkValidity(recievedMessage);
         }
-        else if (StringUtils.isValidCommand(messageText) || SettingsRedux.getInitialized() || isMentioned()) {
+        else if (StringUtils.isValidCommand(messageText) || SettingsRedux.isActive() || isMentioned()) {
             if(isMentioned()) {
                 Main.logger.log("Received mention", Level.INFO,"MessageEvent");
                 commandHandler("Mention");
@@ -67,6 +67,9 @@ public class MessageHandler extends ListenerAdapter {
      */
     public void sendMessage(String messageText) {
         channel.sendMessage(messageText).queue();
+    }
+    public void deleteLastMessage() {
+        channel.deleteMessageById(message.getId()).queue();
     }
 
     /**

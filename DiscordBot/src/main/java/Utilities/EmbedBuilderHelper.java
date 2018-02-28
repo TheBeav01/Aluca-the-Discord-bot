@@ -34,4 +34,8 @@ public class EmbedBuilderHelper {
     public void ClearText() {
         ebMain.clearFields();
     }
+    public void SendAsText(String message) {
+        addText("Command message: ",message);
+        send();
+    }
 }

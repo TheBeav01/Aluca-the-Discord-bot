@@ -1,5 +1,8 @@
 package Utilities;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class StringUtils {
     /**
      * The resulting number from a string.
@@ -16,6 +19,17 @@ public class StringUtils {
                Notify.NotifyAdmin(e.toString());
                return -1;
            }
+    }
+
+    public static String split(String src, String s) {
+        String[] newS = src.split(s);
+        StringBuilder sb = new StringBuilder();
+        ArrayList<String> args = new ArrayList<>(Arrays.asList(newS));
+        args.remove(0);
+        for (String arg : args) {
+          sb.append(arg);
+        }
+        return sb.toString();
     }
 
     /**

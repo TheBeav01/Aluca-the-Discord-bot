@@ -1,5 +1,8 @@
 package modules;
 
+import Commands.DeleteMessageComm;
+import Commands.KillComm;
+import Commands.PingComm;
 import Utilities.*;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.*;
@@ -14,6 +17,7 @@ import java.util.logging.Level;
 public class PassiveListeners extends MessageHandler {
 	private String message;
 	private MessageHandler mh;
+	private EmbedBuilderHelper ebh;
 //	public PassiveListeners() {
 //		super();
 //		System.out.println("Passive listener constructor");
@@ -35,62 +39,48 @@ public class PassiveListeners extends MessageHandler {
 	 * @param channel         The guild channel the message originated in.
 	 * @param settingsRedux
 	 */
-	public void executeCommands(String strippedMessage, String rawMessage, User user, Member member, Guild guild, MessageChannel channel, SettingsRedux settingsRedux) {
+	public void executeCommands(String strippedMessage, String rawMessage, User user,
+								Member member, Guild guild, MessageChannel channel, SettingsRedux settingsRedux) {
 		setFields(strippedMessage, user, member, guild, channel, settingsRedux);
 
 		if (mh == null) {
 			Main.logger.log("MessageHandler has not been initialized!", Level.WARNING, "Gen Logging");
+			return;
 		}
 		try {
 			if (strippedMessage.contains("ping")) {
-				long ping = channel.getJDA().getPing();
-				mh.sendMessage(":ping_pong: \n Time taken: " + ping + "ms");
+				PingComm pc = new PingComm();
+				pc.execute();
 			}
 			if (strippedMessage.contains("kill") && (member.isOwner() || mh.BotOwnerHasMessaged())) {
-				mh.sendMessage("Shutting down.");
-				Main.logger.log("END OF LOG FILE \n ------------------------------------------------", Level.INFO,
-						"Shutdown");
-				Main.logger.close();
-				Main.getJDA().shutdown();
-				System.exit(0);
+				KillComm kc = new KillComm();
+				kc.execute();
 			}
 			if (strippedMessage.contains("del") && (member.isOwner() || mh.BotOwnerHasMessaged())) {
-
-				int x = StringUtils.SplitNumber(strippedMessage);
-				int i = 0;
-				for (Message messages : channel.getIterableHistory()) {
-					if (i > x) {
-						break;
-					} else {
-						Main.logger.log("From: " + messages.getAuthor().getName() + ": " + messages.getRawContent(),
-								Level.INFO, "delete");
-						messages.delete().queue();
-						i++;
-					}
-				}
+				DeleteMessageComm dmc = new DeleteMessageComm(strippedMessage, channel);
+				dmc.execute();
 			}
-			if (rawMessage.equalsIgnoreCase("Y") && (member.isOwner() || mh.BotOwnerHasMessaged())
-					&& SettingsRedux.getInitialized()) {
+			if (rawMessage.equalsIgnoreCase("y") && (member.isOwner() || mh.BotOwnerHasMessaged())
+					&& SettingsRedux.isActive()) {
+				ebh = new EmbedBuilderHelper(new EmbedBuilder(), "DB Shennanigans", "", Bot.DEFAULT_IM_URL);
 				if (!DBUtils.getWhitelistID(channel.getId())) {
-					int isInDB = DBUtils.setWhitelist(channel.getId(), guild.getId());
-					if (isInDB == -1) {
-						throw new IllegalArgumentException("Was not found");
-					} else if (isInDB == 0) {
-						mh.sendMessage("Added channel " + channel.getName() + "to the list of approved channels");
-						Main.logger.log("Added channel ID: " + channel.getId() + " to database",Level.INFO,"DB");
-						return;
-					} else {
-						mh.sendMessage("Channel has been adjusted.");
-						Main.logger.log("Changed channels from old to " + channel.getId(),Level.INFO,"DB");
-						return;
-					}
+					System.out.println("layer 2");
+					SettingsRedux.addWhiteList(channel, guild);
+					return;
+				}
+				else {
+					mh.deleteLastMessage();
+					ebh.SendAsText("ID already found!");
 				}
 			}
 
-			if (rawMessage.equalsIgnoreCase("N") && (member.isOwner() || mh.BotOwnerHasMessaged())
-					&& SettingsRedux.getInitialized()) {
+			if (rawMessage.equalsIgnoreCase("n") && (member.isOwner() || mh.BotOwnerHasMessaged())
+					&& SettingsRedux.isActive()) {
+				mh.deleteLastMessage();
+				ebh = new EmbedBuilderHelper(new EmbedBuilder(), "DB Shennanigans", "", Bot.DEFAULT_IM_URL);
 				SettingsRedux.setInitialized(false);
-				mh.sendMessage("Exiting from the settings menu.");
+				SettingsRedux.setActive(false);
+				ebh.SendAsText("Exiting from the settings menu.");
 				return;
 			}
 			if (strippedMessage.equalsIgnoreCase("ehw")) {
@@ -100,9 +90,13 @@ public class PassiveListeners extends MessageHandler {
 			}
 			if(strippedMessage.equalsIgnoreCase("boop")) {
 				Main.logger.log("Sent boop to " + channel.getId(),Level.INFO,"General Logging");
+
 				if(user.getId().matches("145399954574147584")) { //Rax <3
 					mh.sendMessage("*blinks at the sudden boop, then hugtackles and wrapping both wings around " +
 							" you, purring happily*");
+				}
+				else if(user.getId().matches("370045256902639647")) {
+					mh.sendMessage("*hugtackles the dragon, purring and licking at its face*");
 				}
 				else if(mh.BotOwnerHasMessaged()) {
 					mh.sendMessage("*purrs and nuzzles finger happily*");
@@ -110,6 +104,11 @@ public class PassiveListeners extends MessageHandler {
 				else {
 					mh.sendMessage("*tilts head and looks up at you with a confused gaze*");
 				}
+			}
+			if(strippedMessage.contains("echo")) {
+				String s = StringUtils.split(strippedMessage, " ");
+				mh.deleteLastMessage();
+				mh.sendMessage(s);
 			}
 		} catch (Exception e) {
 			Notify.NotifyAdmin(e.toString());
@@ -185,7 +184,7 @@ public class PassiveListeners extends MessageHandler {
 			}
 		}
 		catch (Exception e) {
-			Notify.NotifyAdmin(e.toString());
+			Notify.NotifyAdmin(e.toString() + " " + e.getCause().toString());
 		}
 	}
 

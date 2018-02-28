@@ -2,6 +2,7 @@ package modules;
 
 import Utilities.*;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -14,6 +15,7 @@ import java.util.logging.Level;
 
 public class SettingsRedux extends MessageHandler {
     private static boolean init = false;
+    private static boolean isActive = false;
     private MessageReceivedEvent holder, lastSuccessful;
     private static String id;
     private EmbedBuilderHelper ebh;
@@ -47,6 +49,7 @@ public class SettingsRedux extends MessageHandler {
         }
         Main.logger.log("Constructed settings embed");
         init = true;
+        isActive = true;
         ebh.send();
     }
 
@@ -66,18 +69,21 @@ public class SettingsRedux extends MessageHandler {
         if((Author.getIdLong() == holder.getAuthor().getIdLong()) &&
                 (ch.getIdLong() == holder.getChannel().getIdLong())) {
             if(stripped.matches("[0-9]+") && Integer.parseInt(stripped) <= Bot.MAX_SETTING_RANGE) {
-                init = false;
                 execute(Integer.parseInt(stripped));
+                init = false;
             }
         }
     }
     public void execute(int code) {
-        switch(code) {
+        mh.deleteLastMessage();
+        switch (code) {
             case 0:
                 Names.Init(mh.getEvent(), ebh);
+                isActive = false;
                 break;
             case 1:
                 RoleColor.Init(mh.getEvent(), ebh);
+                isActive = false;
                 break;
             case 2:
                 ebh.ClearText();
@@ -87,75 +93,44 @@ public class SettingsRedux extends MessageHandler {
             case -1:
                 ebh.ClearText();
                 ebh.addText("Leaving Settings", "");
+                isActive = false;
                 break;
             default:
                 Notify.NotifyAdmin("SettingsRedux => Execute error");
+                isActive = false;
                 break;
         }
-//        if(!RoleColor.isActive()) {
-//            if(holder.getAuthor().isBot()) {
-//                Bot.setMember(holder.getMember());
-//                return;
-//            }
-//            String content = super.getMessageText();
-//            if(content.equals("!s")) {
-//                lastSuccessful = holder;
-//            }
-//
-//            else if(content.equals("1") && init) {
-//                Names.Init(lastSuccessful);
-//            }
-//
-//            else if(content.equals("2") && init) {
-//                lastSuccessful.getChannel().sendMessage("`Enter desired role color`").queue();
-//                RoleColor.Init(lastSuccessful);
-//            }
-//            else if(content.equals("3") && init) {
-//                lastSuccessful.getChannel().sendMessage("`Enable VC join/leave in this channel? Y/N`").queue();
-//            }
-//            else if(content.equals("exit") && init) {
-//                init = false;
-//                lastSuccessful.getChannel().sendMessage("Exiting").queue();
-//            }
-//        }
     }
-
-//    @Override
-//    public void onMessageReceived(MessageReceivedEvent event) {
-//        lastSuccessful = event;
-//        if(!RoleColor.isActive()) {
-//            if(event.getAuthor().isBot()) {
-//                Bot.setMember(event.getMember());
-//                return;
-//            }
-//            String content = event.getMessage().getRawContent();
-//            if(content.equals("!s")) {
-//                lastSuccessful = event;
-//            }
-//
-//            else if(content.equals("1") && init) {
-//                Names.Init(event);
-//            }
-//
-//            else if(content.equals("2") && init) {
-//                event.getChannel().sendMessage("`Enter desired role color`").queue();
-//                RoleColor.Init(event);
-//            }
-//            else if(content.equals("3") && init) {
-//                event.getChannel().sendMessage("`Enable VC join/leave in this channel? Y/N`").queue();
-//            }
-//            else if(content.equals("exit") && init) {
-//                init = false;
-//                event.getChannel().sendMessage("Exiting").queue();
-//            }
-//        }
-//    }
-
     public static boolean getInitialized() {
         return init;
     }
     public static void setInitialized(boolean setInit) {
         init = setInit;
+    }
+    public static boolean isActive() {
+        return isActive;
+    }
+    public static void setActive(boolean setAct) {
+        isActive = setAct;
+    }
+    public static void addWhiteList(MessageChannel channel, Guild guild) {
+        int isInDB = DBUtils.setWhitelist(channel.getId(), guild.getId());
+        MessageHandler mh = Main.getMessageHandler();
+        if (isInDB == -1) {
+            throw new IllegalArgumentException("Was not found");
+        } else if (isInDB == 0) {
+            mh.sendMessage("Added channel " + channel.getName() + "to the list of approved channels");
+            Main.logger.log("Added channel ID: " + channel.getId() + " to database",Level.INFO,"DB");
+            isActive = false;
+            return;
+        } else {
+            mh.sendMessage("Channel has been adjusted.");
+            Main.logger.log("Changed channels from old to " + channel.getId(),Level.INFO,"DB");
+            setInitialized(false);
+            isActive = false;
+            return;
+        }
+
     }
 
 }
