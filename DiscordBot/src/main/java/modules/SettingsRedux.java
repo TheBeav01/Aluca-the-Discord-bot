@@ -54,7 +54,6 @@ public class SettingsRedux extends MessageHandler {
     }
 
     public void checkValidity(MessageReceivedEvent toCheck) {
-        System.out.println("HAAAAAAA");
         User Author = toCheck.getAuthor();
         MessageChannel ch = toCheck.getChannel();
         String stripped = toCheck.getMessage().getStrippedContent();
@@ -78,11 +77,14 @@ public class SettingsRedux extends MessageHandler {
         mh.deleteLastMessage();
         switch (code) {
             case 0:
-                Names.Init(mh.getEvent(), ebh);
+                Names n = new Names(ebh);
+                n.Init(mh.getEvent(), ebh);
                 isActive = false;
                 break;
             case 1:
-                RoleColor.Init(mh.getEvent(), ebh);
+                RoleColor rc = new RoleColor();
+
+                rc.Init(ebh);
                 isActive = false;
                 break;
             case 2:
@@ -91,8 +93,7 @@ public class SettingsRedux extends MessageHandler {
                 ebh.send();
                 break;
             case -1:
-                ebh.ClearText();
-                ebh.addText("Leaving Settings", "");
+                ebh.SendAsText("Exiting from the settings menu.", true);
                 isActive = false;
                 break;
             default:

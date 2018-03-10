@@ -2,62 +2,61 @@ package settings;
 
 import Utilities.Bot;
 import Utilities.EmbedBuilderHelper;
+import Utilities.Notify;
+import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import net.dv8tion.jda.core.managers.*;
+import net.dv8tion.jda.core.managers.GuildController;
 
-public class Names extends ListenerAdapter implements Execute {
+public class Names extends ListenerAdapter{
 	public static final String MESSAGE = "Enter nickname. Type 'Clear' to reset the nickname";
 	public static final String RESET = "Clear";
-	private boolean isActive;
-	private GuildController gc;
-	private long messageID;
-	@Override
-	public void onMessageReceived(MessageReceivedEvent event) {
-		if (event.getAuthor().isBot() && event.getMessage().getRawContent().matches(MESSAGE)) {
-			Bot.setMember(event.getMember());
-			isActive = true;
-		} else if (!event.getAuthor().isBot() && isActive && event.getAuthor().getId().matches(Bot.getOwnerID())) {
-			messageID = event.getMessageIdLong();
-			gc = new GuildController(event.getGuild());
-			isActive = false;
-			
-			String name = event.getMessage().getRawContent();
-			try {
-				if (name.matches(RESET)) {
-					gc.setNickname(Bot.getMember(), null).queue();
-					event.getChannel().deleteMessageById(messageID).queue();
-					event.getChannel().sendMessage("Name reset").queue();
-					Bot.setNickname(Bot.nickName);
-				} else {
-					gc.setNickname(Bot.getMember(), name).queue();
-					event.getChannel().deleteMessageById(messageID).queue();
-					event.getChannel().sendMessage("Name set to " + name).queue();
-					Bot.setNickname(name);
-				}
-			}
-			catch(Exception e) {
-				event.getChannel().sendMessage("Something went wrong.").queue();
-				e.printStackTrace();
-			}
-		}
-	}
+	public static final String BOT_ID = Bot.getBotID();
+	private static User compareTo;
+	private static boolean isActive;
+	private static GuildController gc;
+	private MessageReceivedEvent ev;
+	private static EmbedBuilderHelper ebh;
 
-	public static void Init(MessageReceivedEvent event, EmbedBuilderHelper ebh) {
+	public Names(EmbedBuilderHelper ebh) {
+		Names.ebh = ebh;
+
+	}
+	public void Init(MessageReceivedEvent event, EmbedBuilderHelper ebh) {
+		Names.ebh = ebh;
+		compareTo = event.getAuthor();
+		ebh.ClearText();
 		ebh.addText(MESSAGE, "");
 		ebh.send();
-//		event.getTextChannel().sendMessage(MESSAGE).queue();
+		isActive = true;
 	}
 
-	@Override
-	public Object getSettingValue() {
-		// TODO Auto-generated method stub
-		return null;
+	public static boolean isActive() {
+		return isActive;
 	}
 
-	@Override
-	public boolean isvalid(MessageReceivedEvent event) {
-		// TODO Auto-generated method stub
-		return false;
+	public static void setIsActive(boolean isActive) {
+		Names.isActive = isActive;
+	}
+
+	public static void execute(String newName, MessageReceivedEvent ev) {
+		if(ev.getAuthor().getIdLong() == compareTo.getIdLong()) {
+			System.out.println("Executing names ");
+			gc = new GuildController(ev.getGuild());
+			Member m = ev.getGuild().getMemberById(BOT_ID);
+			try {
+				gc.setNickname(m, newName).queue();
+				Names.ebh.SendAsText("Name changed successfully", true);
+			}
+			catch (Exception e) {
+				Notify.NotifyAdmin(e.toString());
+				Names.ebh.SendAsText("Name changed unsuccessfully. Error code: 2", true);
+
+			}
+		}
+		else {
+			System.out.println("New ID = " + ev.getAuthor().getIdLong() + "OLD ID = " + compareTo.getIdLong());
+		}
 	}
 }

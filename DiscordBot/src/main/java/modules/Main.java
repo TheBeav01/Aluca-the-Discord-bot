@@ -10,7 +10,6 @@ import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.exceptions.RateLimitedException;
-import settings.Names;
 import settings.RoleColor;
 
 import javax.security.auth.login.LoginException;
@@ -40,7 +39,7 @@ public class Main {
 		}
 		b.setJDA(api);
 		mh = new MessageHandler();
-		api.addEventListener(mh, new RoleColor(), new Names()); //
+		api.addEventListener(mh, new RoleColor()); //
 		api.getPresence().setGame(b.getGame());
 	}
 

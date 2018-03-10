@@ -2,6 +2,7 @@ package settings;
 
 import Utilities.Bot;
 import Utilities.EmbedBuilderHelper;
+import Utilities.MessageHandler;
 import Utilities.Notify;
 import modules.Main;
 import net.dv8tion.jda.core.entities.Member;
@@ -12,68 +13,32 @@ import net.dv8tion.jda.core.managers.GuildController;
 import net.dv8tion.jda.core.managers.RoleManager;
 
 import java.awt.*;
-import java.util.logging.Level;
 
-public class RoleColor extends ListenerAdapter implements Execute {
+public class RoleColor extends ListenerAdapter {
 
 	static String id = "";
 	private String color = "";
 	private static boolean isActive = false;
+	private static MessageHandler mh = Main.getMessageHandler();
 	private static String MESSAGE = "Enter a hex code (#xxxxxx). Cannot be 0!";
 	MessageReceivedEvent holder;
-
+	private static EmbedBuilderHelper ebh;
 	public RoleColor() {
-
 	}
 
-	@Override
-	public void onMessageReceived(MessageReceivedEvent event) {
-		String text = event.getMessage().getRawContent();
-		if (event.getAuthor().isBot()) {
-			if (event.getMessage().getRawContent().equals(MESSAGE)) {
-				isActive = true;
-				Bot.setMember(event.getMember());
-			}
-			return;
-		}
-		if (!event.getAuthor().isBot() && isActive && event.getAuthor().getId().matches(Bot.getOwnerID())) {
-			if (text.length() == 7 && text.startsWith("#")) {
-				color = event.getMessage().getRawContent();
-				AssignColor(Bot.getMember(), color);
-				event.getChannel().sendMessage("Color set to: " + color).queue();
-				isActive = false;
-			} else {
-				String failed = "Wrong format! Got " + event.getMessage().getRawContent();
-				if(text.startsWith("exit") || text.startsWith("quit")) {
-					failed = "Exiting...";
-					Main.logger.log("Exiting from RC", Level.INFO, "Settings");
-					isActive = false;
-				}
-				else if(text.length() != 7) {
-					failed += " (Expected 7 characters, got " + text.length() + ")";
-					Main.logger.log("RoleColor fail (<7 chars)", Level.WARNING,"Settings");
-				}
-				else if(!text.startsWith("#")) {
-					failed += "(Expected to start with `#`)";
-					Main.logger.log("RoleColor fail (#)",Level.WARNING,"Settings");
-				}
-
-				else {
-					failed = "Unexpected error ocurred";
-					Main.logger.log(getClass().getName() + "error",Level.WARNING,"Settings");
-				}
-				event.getChannel().sendMessage(failed).queue();
-			}
+	public static void execute(String messageText, MessageReceivedEvent event) {
+		if(isvalid(event)){
+			AssignColor(event.getGuild().getMemberById(Bot.getBotID()),messageText);
 		}
 	}
 
-	private void AssignColor(Member m, String s) {
+	public static void AssignColor(Member m, String s) {
 		Color newC = Color.decode(s);
-		Role role = null;
+		Role role;
 		int size = 0;
 		GuildController gc;
 		if(s.equals("#000000")) {
-			holder.getChannel().sendMessage("Ya goof, I said it shouldn't be zero.");
+			RoleColor.ebh.SendAsText("Ya goof, I said it shouldn't be zero.", true);
 			return;
 		}
 		try {
@@ -84,12 +49,9 @@ public class RoleColor extends ListenerAdapter implements Execute {
 			gc.createRole().queue();
 			size = m.getGuild().getRoles().size();
 			role = m.getGuild().getRoles().get(size-1);
-			gc.addSingleRoleToMember(m, role);
+			gc.addSingleRoleToMember(m, role).queue();
 			Notify.NotifyAdmin(e.toString() + "Size: " + size);
 			return;
-		}
-		catch (Exception e) {
-			Notify.NotifyAdmin(e.toString());
 		}
 		//If no other roles exist on the bot, nothing can be done. Create a new role and add it to the bot.
 		if(m.getRoles().size() == 1) {
@@ -110,24 +72,25 @@ public class RoleColor extends ListenerAdapter implements Execute {
 		
 	}
 
-	@Override
-	public String getSettingValue() {
-		return color;
-	}
-
-	public static void Init(MessageReceivedEvent event, EmbedBuilderHelper ebh) {
-		event.getChannel().sendMessage(MESSAGE).queue();
+	public void Init(EmbedBuilderHelper ebh) {
+		ebh.ClearText();
+		ebh.addText(MESSAGE, "");
+		ebh.send();
+		isActive = true;
+		RoleColor.ebh = ebh;
 		id = Bot.getBotID();
 	}
 
 	public static boolean isActive() {
 		return isActive;
 	}
-
-	@Override
-	public boolean isvalid(MessageReceivedEvent event) {
+	public static void setIsActive(boolean isActive) {
+		RoleColor.isActive = isActive;
+	}
+	public static boolean isvalid(MessageReceivedEvent event) {
 		// TODO Auto-generated method stub
-		return false;
+		String text = event.getMessage().getStrippedContent();
+		return text.startsWith("#") && text.length() == 7;
 	}
 
 }

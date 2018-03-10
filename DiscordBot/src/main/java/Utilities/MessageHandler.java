@@ -6,6 +6,8 @@ import modules.SettingsRedux;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import settings.Names;
+import settings.RoleColor;
 
 import java.util.logging.Level;
 
@@ -40,9 +42,20 @@ public class MessageHandler extends ListenerAdapter {
         guildMember = messageEvent.getMember();
         guild = messageEvent.getGuild();
         channel = messageEvent.getChannel();
-        System.out.println(isMentioned());
+
         if(message.getAuthor().isBot() && !message.getAuthor().getId().matches("370045256902639647")) { //Church <3
+            System.out.println("Bot detected");
             return;
+        }
+        if(Names.isActive()){
+            System.out.println("In Names");
+            Names.setIsActive(false);
+            Names.execute(messageText, messageEvent);
+        }
+        if(RoleColor.isActive()) {
+            System.out.println("In roles");
+            RoleColor.setIsActive(false);
+            RoleColor.execute(messageText, messageEvent);
         }
         if(SettingsRedux.getInitialized()) {
             sr.checkValidity(recievedMessage);
@@ -117,12 +130,9 @@ public class MessageHandler extends ListenerAdapter {
      * @return True if the bot has been mentioned. False otherwise.
      */
     public boolean isMentioned() {
-        System.out.println(message.getContent());
-        System.out.println(guild.getMember(Main.getJDA().getUserById(Bot.getBotID())).getEffectiveName());
         return messageText.contains(guild.getMember(Main.getJDA().getUserById(Bot.getBotID())).getEffectiveName());
     }
     public boolean BotOwnerHasMessaged() {
-        System.out.println("Foo: " + user.getId().equals(Bot.getAdmin().getId()));
         return user.getId().equals(Bot.getAdmin().getId());
     }
 

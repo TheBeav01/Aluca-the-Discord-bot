@@ -39,6 +39,8 @@ public class PassiveListeners extends MessageHandler {
 	 * @param channel         The guild channel the message originated in.
 	 * @param settingsRedux
 	 */
+
+	//TODO: Switch statements to clean up the code?
 	public void executeCommands(String strippedMessage, String rawMessage, User user,
 								Member member, Guild guild, MessageChannel channel, SettingsRedux settingsRedux) {
 		setFields(strippedMessage, user, member, guild, channel, settingsRedux);
@@ -70,7 +72,7 @@ public class PassiveListeners extends MessageHandler {
 				}
 				else {
 					mh.deleteLastMessage();
-					ebh.SendAsText("ID already found!");
+					ebh.SendAsText("ID already found!", false);
 				}
 			}
 
@@ -80,7 +82,7 @@ public class PassiveListeners extends MessageHandler {
 				ebh = new EmbedBuilderHelper(new EmbedBuilder(), "DB Shennanigans", "", Bot.DEFAULT_IM_URL);
 				SettingsRedux.setInitialized(false);
 				SettingsRedux.setActive(false);
-				ebh.SendAsText("Exiting from the settings menu.");
+				ebh.SendAsText("Exiting from the settings menu.", true);
 				return;
 			}
 			if (strippedMessage.equalsIgnoreCase("ehw")) {
