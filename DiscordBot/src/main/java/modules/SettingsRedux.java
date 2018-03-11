@@ -27,8 +27,8 @@ public class SettingsRedux extends MessageHandler {
     }
 
     private void init() {
-        ebh = new EmbedBuilderHelper(new EmbedBuilder(), "Settings Module","'exit' to exit", Bot.DEFAULT_IM_URL);
-        ebh.addColor(184,16,16);
+        ebh = new EmbedBuilderHelper(new EmbedBuilder(), "Settings Module","'exit' to exit");
+        ebh.setColor(184,16,16);
         StringBuilder sb = new StringBuilder();
         Main.logger.log("Branched over to new settings", Level.INFO, "Settings");
         File f = new File(Main.conf.getString("settings-Path"));

@@ -3,6 +3,7 @@ package modules;
 import Commands.DeleteMessageComm;
 import Commands.KillComm;
 import Commands.PingComm;
+import Commands.RollComm;
 import Utilities.*;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.*;
@@ -54,6 +55,11 @@ public class PassiveListeners extends MessageHandler {
 				PingComm pc = new PingComm();
 				pc.execute();
 			}
+			if(strippedMessage.contains("roll")) {
+
+				RollComm rc = new RollComm(StringUtils.split(strippedMessage," "));
+				rc.execute();
+			}
 			if (strippedMessage.contains("kill") && (member.isOwner() || mh.BotOwnerHasMessaged())) {
 				KillComm kc = new KillComm();
 				kc.execute();
@@ -64,7 +70,7 @@ public class PassiveListeners extends MessageHandler {
 			}
 			if (rawMessage.equalsIgnoreCase("y") && (member.isOwner() || mh.BotOwnerHasMessaged())
 					&& SettingsRedux.isActive()) {
-				ebh = new EmbedBuilderHelper(new EmbedBuilder(), "DB Shennanigans", "", Bot.DEFAULT_IM_URL);
+				ebh = new EmbedBuilderHelper(new EmbedBuilder(), "DB Shennanigans", "");
 				if (!DBUtils.getWhitelistID(channel.getId())) {
 					System.out.println("layer 2");
 					SettingsRedux.addWhiteList(channel, guild);
@@ -79,7 +85,7 @@ public class PassiveListeners extends MessageHandler {
 			if (rawMessage.equalsIgnoreCase("n") && (member.isOwner() || mh.BotOwnerHasMessaged())
 					&& SettingsRedux.isActive()) {
 				mh.deleteLastMessage();
-				ebh = new EmbedBuilderHelper(new EmbedBuilder(), "DB Shennanigans", "", Bot.DEFAULT_IM_URL);
+				ebh = new EmbedBuilderHelper(new EmbedBuilder(), "DB Shennanigans", "");
 				SettingsRedux.setInitialized(false);
 				SettingsRedux.setActive(false);
 				ebh.SendAsText("Exiting from the settings menu.", true);
@@ -128,7 +134,7 @@ public class PassiveListeners extends MessageHandler {
 		}
 
 		try {
-			m.sendMessage(member.getEffectiveName() + " has joined " + event.getChannelJoined().getName());
+			m.sendMessage(member.getEffectiveName() + " has joined " + event.getChannelJoined().getName()).queue();
 			Main.logger.log("VC join detected in " + m.getId(),Level.INFO,"General Logging");
 		} catch (Exception e) {
 			Notify.NotifyAdmin(e.getMessage());
@@ -148,7 +154,7 @@ public class PassiveListeners extends MessageHandler {
 		}
 
 		try {
-			m.sendMessage(member.getEffectiveName() + " has left " + event.getChannelLeft().getName());
+			m.sendMessage(member.getEffectiveName() + " has left " + event.getChannelLeft().getName()).queue();
 			Main.logger.log("VC leave detected " + m.getId(),Level.INFO,"General Logging");
 		} catch (Exception e) {
 			Notify.NotifyAdmin(e.getMessage());
@@ -198,9 +204,9 @@ public class PassiveListeners extends MessageHandler {
 	 */
 	private MessageChannel FindChannel(Guild guild) {
 		List<TextChannel> guildList = guild.getTextChannels();
-		for (int i = 0; i < guildList.size(); i++) {
-			if (DBUtils.getWhitelistID(guildList.get(i).getId())) {
-				return guildList.get(i);
+		for (TextChannel aGuildList : guildList) {
+			if (DBUtils.getWhitelistID(aGuildList.getId())) {
+				return aGuildList;
 			}
 		}
 		return null;
