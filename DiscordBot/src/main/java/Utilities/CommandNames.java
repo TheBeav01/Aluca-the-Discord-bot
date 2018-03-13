@@ -1,6 +1,6 @@
 package Utilities;
 
 public enum CommandNames {
-    kill, ping, s, del, ehw, boop, aasr, cr, echo, roll
+    kill, ping, s, del, boop, aasr, cr, echo, r
 }
 

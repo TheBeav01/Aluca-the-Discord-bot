@@ -54,19 +54,23 @@ public class PassiveListeners extends MessageHandler {
 			if (strippedMessage.contains("ping")) {
 				PingComm pc = new PingComm();
 				pc.execute();
+				return;
 			}
-			if(strippedMessage.contains("roll")) {
+			if(strippedMessage.startsWith("r ")) {
 
 				RollComm rc = new RollComm(StringUtils.split(strippedMessage," "));
 				rc.execute();
+				return;
 			}
 			if (strippedMessage.contains("kill") && (member.isOwner() || mh.BotOwnerHasMessaged())) {
 				KillComm kc = new KillComm();
 				kc.execute();
+				return;
 			}
 			if (strippedMessage.contains("del") && (member.isOwner() || mh.BotOwnerHasMessaged())) {
 				DeleteMessageComm dmc = new DeleteMessageComm(strippedMessage, channel);
 				dmc.execute();
+				return;
 			}
 			if (rawMessage.equalsIgnoreCase("y") && (member.isOwner() || mh.BotOwnerHasMessaged())
 					&& SettingsRedux.isActive()) {
@@ -74,12 +78,12 @@ public class PassiveListeners extends MessageHandler {
 				if (!DBUtils.getWhitelistID(channel.getId())) {
 					System.out.println("layer 2");
 					SettingsRedux.addWhiteList(channel, guild);
-					return;
 				}
 				else {
 					mh.deleteLastMessage();
 					ebh.SendAsText("ID already found!", false);
 				}
+				return;
 			}
 
 			if (rawMessage.equalsIgnoreCase("n") && (member.isOwner() || mh.BotOwnerHasMessaged())
@@ -90,11 +94,6 @@ public class PassiveListeners extends MessageHandler {
 				SettingsRedux.setActive(false);
 				ebh.SendAsText("Exiting from the settings menu.", true);
 				return;
-			}
-			if (strippedMessage.equalsIgnoreCase("ehw")) {
-				EmbedBuilderHelper ebh = new EmbedBuilderHelper(new EmbedBuilder(), null, null, null);
-				Main.logger.log("Embedded Hello World", Level.INFO, "General Logging");
-				ebh.helloWorld();
 			}
 			if(strippedMessage.equalsIgnoreCase("boop")) {
 				Main.logger.log("Sent boop to " + channel.getId(),Level.INFO,"General Logging");
@@ -112,11 +111,13 @@ public class PassiveListeners extends MessageHandler {
 				else {
 					mh.sendMessage("*tilts head and looks up at you with a confused gaze*");
 				}
+				return;
 			}
 			if(strippedMessage.contains("echo")) {
 				String s = StringUtils.split(strippedMessage, " ");
 				mh.deleteLastMessage();
 				mh.sendMessage(s);
+				return;
 			}
 		} catch (Exception e) {
 			Notify.NotifyAdmin(e.toString());
