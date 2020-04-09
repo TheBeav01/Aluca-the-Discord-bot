@@ -1,2 +1,3 @@
-# Personal-fun-stuff
-Just things I make in my spare time. No school projects or anything ^^
+# Aluca the Discord Bot
+
+Aluca the Cutest Discord Bot™
